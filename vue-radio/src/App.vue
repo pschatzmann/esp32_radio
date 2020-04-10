@@ -30,7 +30,7 @@
                 <v-icon>mdi-contact-mail</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-                <v-list-item-title>My Country</v-list-item-title>
+                <v-list-item-title>{{ homeCountryName }}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
 
@@ -59,11 +59,11 @@ import WebService from "@/services/WebService"
   export default {
     props: {
       source: String,
-      homeCountryPath: null,
-      homeCountryName: null
     },
     data: () => ({
       drawer: null,
+      homeCountryPath: '/countries/ch',
+      homeCountryName: null
     }),
     mounted() {
             const ws = new WebService()
