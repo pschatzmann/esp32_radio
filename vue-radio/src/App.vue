@@ -68,8 +68,8 @@ import WebService from "@/services/WebService"
     mounted() {
             const ws = new WebService()
             ws.getUserCountry().then(result => {
-                this.homeCountryName = result.data.country
-                this.homeCountryPath = '/countries/'+result.data.countryCode.toLowerCase()
+                this.homeCountryName = result.data.country_name
+                this.homeCountryPath = '/countries/'+result.data.country_code.toLowerCase()
             }).catch(error => {
                 console.error(error)
             })

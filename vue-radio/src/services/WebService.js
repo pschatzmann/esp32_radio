@@ -24,7 +24,7 @@ export default class WebService {
     }
     
     async getUserCountry() {
-        return await fetch( "http://ip-api.com/json")
+        return await axios.get("https://api.ipdata.co/?api-key=test")
     }
 
 
