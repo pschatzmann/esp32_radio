@@ -62,14 +62,14 @@ import WebService from "@/services/WebService"
     },
     data: () => ({
       drawer: null,
-      homeCountryPath: '/countries/ch',
+      homeCountryPath: '/home/ch',
       homeCountryName: null
     }),
     mounted() {
             const ws = new WebService()
             ws.getUserCountry().then(result => {
                 this.homeCountryName = result.data.country_name
-                this.homeCountryPath = '/countries/'+result.data.country_code.toLowerCase()
+                this.homeCountryPath = '/home/'+result.data.country_code.toLowerCase()
             }).catch(error => {
                 console.error(error)
             })

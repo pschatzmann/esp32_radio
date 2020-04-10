@@ -3,9 +3,9 @@
             <v-row>
                 <v-col cols="20" sm="1" md="3"  v-for="item in this.radios" :key="item.stationuuid" >
                     <v-hover  v-slot:default="{ hover }" close-delay="200">
-                        <v-card outlined tiled class="mx-auto" max-width="200px" :elevation="hover ? 16 : 2">
+                        <v-card outlined tiled class="mx-auto" max-width="200px" :elevation="hover ? 16 : 2" @click.native="play(item.url_resolved)">
 
-                            <v-img
+                            <v-img 
                                 :src="item.favicon"
                                 class="white--text align-end"
                                 height="200px"
@@ -18,7 +18,7 @@
                                     justify="center"
                                     >
                                     <v-img
-                                        src="http://icons.iconarchive.com/icons/webalys/kameleon.pics/128/Radio-4-icon.png"
+                                        :src=defaultImage
                                         class="white--text align-end"
                                         height="200px"
                                         width="200px"/>
@@ -29,25 +29,11 @@
                             </v-img>
                             <v-card-text v-text="item.name">
                             </v-card-text>
-                            
-                            <v-card-actions>
-                                <v-btn icon color="blue" @click="play(item.url_resolved)">
-                                      <v-icon>mdi-play</v-icon>
-                                </v-btn>
-
-                                <!--
-                                <v-btn icon color="red">
-                                      <v-icon>mdi-heart</v-icon>
-                                </v-btn>
-                                -->
-
-                            </v-card-actions>
-                            
-
                         </v-card>
                     </v-hover>
                 </v-col>
             </v-row>
+
     </v-container>
 </template>
 
@@ -58,8 +44,11 @@
     export default {
         data: () => ({
             radios: [],
+            radioIds: {},
             hover: false,
-            player: new MusicPlayer()
+            player: new MusicPlayer(),
+            musicURL: null,
+            defaultImage: "http://icons.iconarchive.com/icons/webalys/kameleon.pics/128/Radio-4-icon.png"
         }),
 
         methods: {
@@ -74,7 +63,6 @@
             const ws = new WebService()
             ws.getRadios(field, searchTerm).then(result => {
                 this.radios = result.data
-                console.log('mount finised '+this.radios.length)
             }).catch(error => {
                 console.error(error)
             })
@@ -82,3 +70,10 @@
     }
 
 </script>
+
+<style scoped>
+    .v-card {
+        cursor: pointer;
+    }
+
+</style>

@@ -56,7 +56,7 @@ export default {
 </script>
 
 <style scoped>
-    img:hover {
+    .v-card {
         cursor: pointer;
     }
 

@@ -1,8 +1,11 @@
+
+
 export default class MusicPlayer {
     constructor(){
-        this.audioCtx = new (window.AudioContext || window.webkitAudioContext);
-        this.source = this.audioCtx.createBufferSource();
-        this.isPlaying = false
+        if (MusicPlayer.isPlaying ===undefined){
+            MusicPlayer.audio = null;
+            MusicPlayer.isPlaying = false
+        }
     }
 
     getName() {
@@ -10,21 +13,22 @@ export default class MusicPlayer {
     }
 
     async play(url){
-        var response = await window.fetch(url)
-        var audioBuffer = await this.audioCtx.decodeAudioData(response.arrayBuffer)
-        this.source.buffer = audioBuffer;
-        this.source.connect(this.audioCtx.destination);
-        this.source.start();
-        this.isPlaying = true
+        this.stop();
+        MusicPlayer.audio = new Audio(url);
+        MusicPlayer.audio.play();
+        MusicPlayer.isPlaying = true
     }
 
     async stop() {
-        this.source.stop();
-        this.isPlaying = false
+        if (MusicPlayer.audio!=null) {
+            MusicPlayer.audio.pause();
+            MusicPlayer.audio = null;
+        }
+        MusicPlayer.isPlaying = false
     }
 
     async getInfo() {
-        return {'isPlaying': this.isPlaying};
+        return {'isPlaying': MusicPlayer.isPlaying};
     }
 
 

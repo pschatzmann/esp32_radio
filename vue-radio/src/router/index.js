@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Radios from '../views/Radios.vue'
 import Countries from '../views/Countries.vue'
 import Genres from '../views/Genres.vue'
 
@@ -20,7 +20,7 @@ Vue.use(VueRouter)
   {
     path: '/genres/:id',
     name: 'Genre',
-    component: Home,
+    component: Radios,
     props: true, 
   },
   {
@@ -31,7 +31,13 @@ Vue.use(VueRouter)
   {
     path: '/countries/:id',
     name: 'Country',
-    component: Home,
+    component: Radios,
+    props: true, 
+  },
+  {
+    path: '/home/:id',
+    name: 'Radios',
+    component: Radios,
     props: true, 
   },
 ]

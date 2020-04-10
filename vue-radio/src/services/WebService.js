@@ -27,10 +27,17 @@ export default class WebService {
         return await axios.get("https://api.ipdata.co/?api-key=test")
     }
 
-
     async getRadios(field, value) {
         var url = "https://de1.api.radio-browser.info/json/stations/search?"+field+"="+value+"&codec=MP3"
         return await axios.get(url);
+    }
+
+    async check(url, row){
+        var ok = await axios.options(url)
+        if (ok.status=200)
+            return row
+        throw new Error(ok.statusText)
+
     }
     
 
