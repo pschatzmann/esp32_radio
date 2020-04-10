@@ -3,7 +3,7 @@ module.exports = {
     "vuetify"
   ],
   publicPath: process.env.NODE_ENV === 'production'
-  ? '/esp32_vue_example/vue-demo/dist/'
+  ? '/esp32_radio/vue-radio/dist/'
   : '/',
   crossorigin:"anonymous"
 
