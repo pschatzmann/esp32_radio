@@ -10,9 +10,9 @@ export default class WebService {
         return await axios.get("/service/info")
     }
 
-    // loads html from Wordpress
-    async getWordpressPost() {
-        return await axios.get( "https://pschatzmann.ch/wp-json/wp/v2/posts/1323")
+    async getGenres() {
+        console.log("getGenres")
+        return await axios.get("/genres/genres.json")
     }
 
     async getCountryCodes() {

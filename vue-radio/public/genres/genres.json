@@ -1,0 +1,13 @@
+[{"name":"African", "imageUrl":"/genres/african.jpg"},
+    {"name":"Blues","imageUrl":"/genres/blues.jpg"},
+    {"name":"Caribbean","imageUrl":"/genres/caribbean.jpg"},
+    {"name":"Country","imageUrl":"/genres/country.jpg"},
+    {"name":"Electronic","imageUrl":"/genres/electronic.jpg"},
+    {"name":"Folk","imageUrl":"/genres/folk.jpg"},
+    {"name":"Hip hop","imageUrl":"/genres/hiphop.jpg"},
+    {"name":"Jazz","imageUrl":"/genres/jazz.jpg"},
+    {"name":"Latin","imageUrl":"/genres/latin.jpg"},
+    {"name":"Pop","imageUrl":"/genres/pop.jpg"},
+    {"name":"Soul","imageUrl":"/genres/soul.jpg"},
+    {"name":"Rock","imageUrl":"/genres/rock.jpg"},
+    {"name":"Classical","imageUrl":"/genres/classic.jpg"}]

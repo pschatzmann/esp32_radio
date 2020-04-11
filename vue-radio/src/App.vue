@@ -12,7 +12,7 @@
                 <v-icon>mdi-contact-mail</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-                <v-list-item-title>By Genres</v-list-item-title>
+                <v-list-item-title>Radios by Genres</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
 
@@ -21,19 +21,27 @@
                 <v-icon>mdi-contact-mail</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-                <v-list-item-title>By Country</v-list-item-title>
+                <v-list-item-title>Radios by Country</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
 
-        <v-list-item :to="homeCountryPath" v-if="homeCountryName!=null">
+        <v-list-item :to="$store.state.homeCountry.homeCountryPath" v-if="$store.state.homeCountry!=null">
             <v-list-item-action>
                 <v-icon>mdi-contact-mail</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-                <v-list-item-title>{{ homeCountryName }}</v-list-item-title>
+                <v-list-item-title>Radios in {{ $store.state.homeCountry.homeCountryName }}</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
 
+        <v-list-item to="/about">
+            <v-list-item-action>
+                <v-icon>mdi-contact-mail</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>About</v-list-item-title>
+            </v-list-item-content>
+        </v-list-item>
 
       </v-list>
     </v-navigation-drawer>
@@ -44,7 +52,7 @@
       dark
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title>Radio Player for ESP32</v-toolbar-title>
+      <v-toolbar-title>{{ $store.state.title }}</v-toolbar-title>
     </v-app-bar>
 
     <v-content>
@@ -54,7 +62,6 @@
 </template>
 
 <script>
-import WebService from "@/services/WebService"
 
   export default {
     props: {
@@ -62,17 +69,12 @@ import WebService from "@/services/WebService"
     },
     data: () => ({
       drawer: null,
-      homeCountryPath: '/home/ch',
-      homeCountryName: null
     }),
     mounted() {
-            const ws = new WebService()
-            ws.getUserCountry().then(result => {
-                this.homeCountryName = result.data.country_name
-                this.homeCountryPath = '/home/'+result.data.country_code.toLowerCase()
-            }).catch(error => {
-                console.error(error)
-            })
+          this.$store.dispatch('setupTitle')
+          this.$store.dispatch('setupGenres')
+          this.$store.dispatch('setupCountries')
+          this.$store.dispatch('setupHomeCountry')
         }
 
   }

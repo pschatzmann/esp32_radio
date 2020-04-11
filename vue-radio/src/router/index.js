@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Radios from '../views/Radios.vue'
 import Countries from '../views/Countries.vue'
 import Genres from '../views/Genres.vue'
+import About from '../views/About.vue'
 
 Vue.use(VueRouter)
 
@@ -39,6 +40,11 @@ Vue.use(VueRouter)
     name: 'Radios',
     component: Radios,
     props: true, 
+  },
+  {
+    path: '/about',
+    name: 'About',
+    component: About,
   },
 ]
 
