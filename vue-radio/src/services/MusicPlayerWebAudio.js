@@ -1,4 +1,5 @@
 
+import axios from 'axios'
 
 export default class MusicPlayer {
     constructor(){
@@ -10,6 +11,10 @@ export default class MusicPlayer {
 
     getName() {
         return "Playing locally"
+    }
+
+    async setup() {
+        return await axios.post("/service/bluetooth");
     }
 
     async play(url){

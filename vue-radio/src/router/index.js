@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Radios from '../views/Radios.vue'
-import Countries from '../views/Countries.vue'
-import Genres from '../views/Genres.vue'
-import About from '../views/About.vue'
+import Radios from '../views/Radios'
+import Countries from '../views/Countries'
+import Genres from '../views/Genres'
+import About from '../views/About'
+import Setup from '../views/Setup'
 
 Vue.use(VueRouter)
 
@@ -46,6 +47,12 @@ Vue.use(VueRouter)
     name: 'About',
     component: About,
   },
+  {
+    path: '/setup',
+    name: 'Setup',
+    component: Setup,
+  },
+
 ]
 
 const router = new VueRouter({

@@ -10,11 +10,18 @@ export default new Vuex.Store({
     genres: [],
     homeCountry: null,
     title: "Radio Player",
+    esp32: false,
     publicPath: process.env.BASE_URL,
+    drawer: null,
+
   },
   mutations: {
+    setDrawer(state, drawer){
+      state.drawer = drawer;
+    },
+
     setCountries(state, countries) {
-        state.countries = countries;
+      state.countries = countries;
     },
 
     setGenres(state, genres) {
@@ -22,11 +29,12 @@ export default new Vuex.Store({
     },
 
     setHome(state, homeCountry) {
-    state.homeCountry = homeCountry;
+      state.homeCountry = homeCountry;
     },
 
-    setTitle(state, title) {
-    state.title = title;
+    setESP32Title(state) {
+      state.title = 'ESP32 Radio Player';
+      state.esp32 = true;
     }
 
   },
@@ -35,7 +43,7 @@ export default new Vuex.Store({
     setupGenres(context){
       if (context.state.genres.length==0) {
         const ws = new WebService()
-        const publicPath = process.env.BASE_URL
+        const publicPath = context.state.publicPath;
         ws.getGenres(publicPath).then(result => {
             result.data.forEach(c => {c.imageUrl = publicPath+c.imageUrl;});
             context.commit('setGenres', result.data);
@@ -55,7 +63,7 @@ export default new Vuex.Store({
               }
               ws.getCountryCodes().then(result1 => {
                 var countryData = result1.data
-                const publicPath = process.env.BASE_URL
+                const publicPath = context.state.publicPath;
                 for (var c of countryData ){
                     c.iconUrl = publicPath+"flags/"+c.name.toLowerCase()+".png"
                     c.countryCode = c.name
@@ -76,8 +84,12 @@ export default new Vuex.Store({
         const ws = new WebService()
         ws.getUserCountry().then(result => {
             var home = {}
+            const publicPath = context.state.publicPath;
+            const countryCode = result.data.country_code.toLowerCase()
             home.homeCountryName = result.data.country_name
-            home.homeCountryPath = '/home/'+result.data.country_code.toLowerCase()
+            home.homeCountryPath = '/home/'+countryCode
+            home.iconUrl = publicPath+"flags/"+countryCode+".png"
+
             context.commit('setHome', home);
 
         }).catch(error => {
@@ -89,7 +101,7 @@ export default new Vuex.Store({
     setupTitle(context){
       const ws = new WebService()
       ws.getInfo().then(result => {
-        context.commit('setTitle', 'ESP32 Radio Player');
+        context.commit('setESP32Title');
         console.log(result)
       });
     }

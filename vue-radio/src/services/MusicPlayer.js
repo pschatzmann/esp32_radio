@@ -20,6 +20,7 @@ export default class MusicPlayer {
     setSource(selected){
         // stop any playing music
         this.stop();
+        this.selected.setup();
         this.source = selected
     }
 
