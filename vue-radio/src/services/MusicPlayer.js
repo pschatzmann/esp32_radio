@@ -34,15 +34,15 @@ export default class MusicPlayer {
 
     async play(url){
         this.stop();
-        return this.source.play(url);
+        return await this.source.play(url);
     }
 
     async stop() {
-        return this.source.stop();
+        return await this.source.stop();
     }
 
     async getInfo() {
-        return this.source.getInfo();
+        return await this.source.getInfo();
     }
 
     isPlaying(){
