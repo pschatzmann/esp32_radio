@@ -63,7 +63,9 @@
                         console.log(r)
                     }, error => {
                         console.error(error)
-                    })
+                    }).catch(e => {
+                        console.log(e);
+                    });
                 }
             },
 
