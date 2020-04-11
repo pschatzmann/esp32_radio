@@ -36,5 +36,9 @@ export default class MusicPlayer {
         return {'isPlaying': MusicPlayer.isPlaying};
     }
 
+    isPlaying(){
+        return MusicPlayer.isPlaying;
+    }
+
 
 }

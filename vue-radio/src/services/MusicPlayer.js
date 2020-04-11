@@ -45,4 +45,9 @@ export default class MusicPlayer {
         return this.source.getInfo();
     }
 
+    isPlaying(){
+        return this.source.isPlaying;
+    }
+
+
 }
