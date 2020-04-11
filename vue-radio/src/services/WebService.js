@@ -24,7 +24,7 @@ export default class WebService {
     }
     
     async getUserCountry() {
-        return await axios.get("https://api.ipdata.co/?api-key=test")
+        return await axios.get("https://api.ipdata.co/?api-key=62f04882eac5c1c2469a3dee1d5c98187ba19c0a189783d372e36122")
     }
 
     async getRadios(field, value) {

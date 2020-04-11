@@ -16,7 +16,6 @@
                                 {{ item.countryCode }} - {{ item.counrtyName }} ({{ item.stationcount}})
                             </v-card-text>
                                                 
-
                         </v-card>
                     </v-hover>
                 </v-col>

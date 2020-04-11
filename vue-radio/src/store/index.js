@@ -13,8 +13,8 @@ export default new Vuex.Store({
     esp32: false,
     publicPath: process.env.BASE_URL,
     drawer: null,
-    activeRadio: {id:null, active:false, url:null}
-
+    activeRadio: {id:null, active:false, url:null},
+    radios: {}
   },
   mutations: {
     setDrawer(state, drawer){
@@ -37,6 +37,9 @@ export default new Vuex.Store({
       state.activeRadio = activeRadio;
     },
 
+    setRadios(state, upd) {
+      state.radios[upd.id] = upd.value;
+    },
 
     setESP32Title(state) {
       state.title = 'ESP32 Radio Player';
@@ -97,6 +100,15 @@ export default new Vuex.Store({
             home.iconUrl = publicPath+"flags/"+countryCode+".png"
 
             context.commit('setHome', home);
+
+            ws.getRadios('countrycode', countryCode).then(result => {
+                const radios = result.data
+                const id = 'countrycode'+ countryCode
+                context.commit('setRadios', {id:id, value:radios});
+
+            }).catch(error => {
+                console.error(error)
+            })
 
         }).catch(error => {
             console.error(error)

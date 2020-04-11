@@ -68,6 +68,21 @@
                 }
             },
 
+            getRadios(field, value){
+                var temp = this.$store.state.radios[field+value]
+                if (temp!=null){
+                    this.radios = temp;
+                } else {
+                    const ws = new WebService()
+                    ws.getRadios(field, value).then(result => {
+                        this.radios = result.data
+                        this.$store.commit('setRadios', {id:field+value, value:this.radios});
+                    }).catch(error => {
+                        console.error(error)
+                    })
+                }
+            },
+
             isPlaying(id){
                 return this.$store.state.activeRadio.active && this.$store.state.activeRadio.id==id
             }
@@ -76,12 +91,7 @@
         mounted() {
             var searchTerm = this.$router.currentRoute.params['id']=== undefined ? "blues": this.$router.currentRoute.params.id;
             var field = this.$router.currentRoute.name == 'Genre' ? 'tag' : 'countrycode'
-            const ws = new WebService()
-            ws.getRadios(field, searchTerm).then(result => {
-                this.radios = result.data
-            }).catch(error => {
-                console.error(error)
-            })
+            this.getRadios(field, searchTerm);
         }
     }
 
