@@ -57,10 +57,9 @@
                     result.active = false;
                     this.$store.commit('setActiveRadio', result );
                 } else {
-                    this.player.play(url).then(r => {
-                        result.active = this.player.isPlaying();
+                    this.player.play(url).then(playing => {
+                        result.active = playing;
                         this.$store.commit('setActiveRadio', result );
-                        console.log(r)
                     }, error => {
                         console.error(error)
                     }).catch(e => {

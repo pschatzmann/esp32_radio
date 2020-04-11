@@ -19,9 +19,14 @@ export default class MusicPlayer {
 
     async play(url){
         this.stop();
-        MusicPlayer.audio = new Audio(url);
-        MusicPlayer.audio.play();
-        MusicPlayer.isPlaying = true
+        try {
+            MusicPlayer.audio = new Audio(url);
+            MusicPlayer.audio.play();
+            MusicPlayer.isPlaying = true
+        } catch(error){
+            console.error(error)
+        }
+        return MusicPlayer.isPlaying
     }
 
     async stop() {
