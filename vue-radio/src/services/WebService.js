@@ -10,9 +10,9 @@ export default class WebService {
         return await axios.get("/service/info")
     }
 
-    async getGenres() {
+    async getGenres(publicPath) {
         console.log("getGenres")
-        return await axios.get("/genres/genres.json")
+        return await axios.get(publicPath+"genres/genres.json")
     }
 
     async getCountryCodes() {

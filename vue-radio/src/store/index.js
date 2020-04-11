@@ -9,22 +9,25 @@ export default new Vuex.Store({
     countries: [],
     genres: [],
     homeCountry: null,
-    title: "Radio Player"
-
+    title: "Radio Player",
+    publicPath: process.env.BASE_URL,
   },
   mutations: {
     setCountries(state, countries) {
-       state.countries = countries;
+        state.countries = countries;
     },
+
     setGenres(state, genres) {
       state.genres = genres;
-   },
-   setHome(state, homeCountry) {
+    },
+
+    setHome(state, homeCountry) {
     state.homeCountry = homeCountry;
-   },
-   setTitle(state, title) {
+    },
+
+    setTitle(state, title) {
     state.title = title;
-   }
+    }
 
   },
   actions: {
@@ -32,7 +35,9 @@ export default new Vuex.Store({
     setupGenres(context){
       if (context.state.genres.length==0) {
         const ws = new WebService()
-        ws.getGenres().then(result => {
+        const publicPath = process.env.BASE_URL
+        ws.getGenres(publicPath).then(result => {
+            result.data.forEach(c => {c.imageUrl = publicPath+c.imageUrl;});
             context.commit('setGenres', result.data);
         }, error => {
             console.error(error);
@@ -50,8 +55,9 @@ export default new Vuex.Store({
               }
               ws.getCountryCodes().then(result1 => {
                 var countryData = result1.data
+                const publicPath = process.env.BASE_URL
                 for (var c of countryData ){
-                    c.iconUrl = "/flags/"+c.name.toLowerCase()+".png"
+                    c.iconUrl = publicPath+"flags/"+c.name.toLowerCase()+".png"
                     c.countryCode = c.name
                     c.counrtyName = countryNames[c.name.toLowerCase()]
                 }
