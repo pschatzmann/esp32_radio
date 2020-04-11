@@ -46,7 +46,7 @@ export default class MusicPlayer {
     }
 
     isPlaying(){
-        return this.source.isPlaying;
+        return this.source.isPlaying();
     }
 
 
