@@ -3,11 +3,10 @@
             <v-row>
                 <v-col cols="20" sm="1" md="3"  v-for="item in this.radios" :key="item.stationuuid" >
                     <v-hover  v-slot:default="{ hover }" close-delay="200">
-                        <v-card outlined tiled class="mx-auto" max-width="200px" :elevation="hover ? 16 : 2" @click.native="play(item.url_resolved)">
+                        <v-card outlined tiled class="mx-auto" v-bind:class="{ pulsate: isPlaying(item.stationuuid) }" max-width="200px" :elevation="hover ? 16 : 2" @click.native="play(item.url_resolved, item.stationuuid)">
 
                             <v-img 
                                 :src="item.favicon"
-                                class="white--text align-end"
                                 height="200px"
                                 width="200px">
 
@@ -19,7 +18,6 @@
                                     >
                                     <v-img
                                         :src=defaultImage
-                                        class="white--text align-end"
                                         height="200px"
                                         width="200px"/>
 
@@ -44,16 +42,20 @@
     export default {
         data: () => ({
             radios: [],
-            radioIds: {},
             hover: false,
             player: new MusicPlayer(),
-            musicURL: null,
+            activeRadioId: null,
             defaultImage: "http://icons.iconarchive.com/icons/webalys/kameleon.pics/128/Radio-4-icon.png"
         }),
 
         methods: {
-            play: function (url) {
+            play: function (url, id) {
+                this.activeRadioId = id
                 this.player.play(url)
+            },
+
+            isPlaying(id){
+                return this.activeRadioId==id
             }
         },
 
@@ -75,5 +77,21 @@
     .v-card {
         cursor: pointer;
     }
+
+    .pulsate {
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% {
+            border-width: 0px;
+        }
+        100% {
+            border-width: 5px;
+        }
+    }
+
+
+
 
 </style>
