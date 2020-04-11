@@ -44,18 +44,29 @@
             radios: [],
             hover: false,
             player: new MusicPlayer(),
-            activeRadioId: null,
             defaultImage: "http://icons.iconarchive.com/icons/webalys/kameleon.pics/128/Radio-4-icon.png"
         }),
 
         methods: {
             play: function (url, id) {
-                this.activeRadioId = id
-                this.player.play(url)
+                var result = {};
+                result.id = id;
+                result.url = url;
+                if (this.isPlaying(id)) {
+                    this.player.stop();
+                    result.active = false;
+                    this.$store.commit('setActiveRadio', result );
+                } else {
+                    this.player.play(url).then(r => {
+                        result.active = true;
+                        this.$store.commit('setActiveRadio', result );
+                        console.log(r)
+                    })
+                }
             },
 
             isPlaying(id){
-                return this.activeRadioId==id
+                return this.$store.state.activeRadio.active && this.$store.state.activeRadio.id==id
             }
         },
 
@@ -84,14 +95,11 @@
 
     @keyframes pulse {
         0% {
-            border-width: 0px;
+            background-color: lightgrey;
         }
         100% {
-            border-width: 5px;
+            background-color: white;
         }
     }
-
-
-
 
 </style>

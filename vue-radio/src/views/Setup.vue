@@ -20,13 +20,13 @@
 <script>
 import WebService from "@/services/WebService"
 export default {
-        data: function(){
-             return {
-                heap: undefined,
-                ssid: 'not defined',
-                iswebserviceok: true
-             }
-        },
+    
+        data: () => ({             
+            heap: undefined,
+            ssid: 'not defined',
+            iswebserviceok: true
+        }),
+
         mounted() {
             console.log("Info mounted");
             const ws = new WebService();

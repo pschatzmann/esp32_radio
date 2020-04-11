@@ -8,6 +8,8 @@
     >
       <v-app-bar-nav-icon @click.stop="toggleDrawer()" />
       <v-toolbar-title>{{ $store.state.title }}</v-toolbar-title>
+      <v-spacer/>
+      <start-stop-control/>
     </v-app-bar>
 
     <v-content>
@@ -18,6 +20,7 @@
 
 <script>
   import NavigationMenu from '@/components/NavigationMenu'
+  import StartStopControl from '@/components/StartStop'
 
   export default {
     props: {
@@ -39,7 +42,8 @@
     },
     
     components: {
-      'navigation-menu': NavigationMenu
+      'navigation-menu': NavigationMenu,
+      'start-stop-control': StartStopControl
     }
   }
 
