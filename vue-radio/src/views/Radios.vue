@@ -37,13 +37,11 @@
 
 <script>
     import WebService from "@/services/WebService"
-    import MusicPlayer from '@/services/MusicPlayer'
 
     export default {
         data: () => ({
             radios: [],
             hover: false,
-            player: new MusicPlayer(),
         }),
 
         methods: {
@@ -51,12 +49,13 @@
                 var result = {};
                 result.id = id;
                 result.url = url;
+                var player = this.$store.state.musicPlayer;
                 if (this.isPlaying(id)) {
-                    this.player.stop();
+                    player.stop();
                     result.active = false;
                     this.$store.commit('setActiveRadio', result );
                 } else {
-                    this.player.play(url).then(playing => {
+                    player.play(url).then(playing => {
                         result.active = playing;
                         this.$store.commit('setActiveRadio', result );
                     }, error => {
@@ -110,7 +109,7 @@
             background-color: lightgrey;
         }
         100% {
-            background-color: white;
+            background-color: black;
         }
     }
 

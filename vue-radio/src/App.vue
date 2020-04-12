@@ -3,7 +3,7 @@
     <navigation-menu/>
     <v-app-bar
       app
-      color="indigo"
+      color="darkblue"
       dark
     >
       <v-app-bar-nav-icon @click.stop="toggleDrawer()" />

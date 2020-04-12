@@ -19,11 +19,9 @@ export default {
 </template>
 
 <script>
-  import MusicPlayer from '@/services/MusicPlayer'
 
   export default {
     data: () => ({             
-         player: new MusicPlayer(),
     }),
 
     computed: {
@@ -38,9 +36,9 @@ export default {
                 activeRadio.active = newValue
 
                 if (newValue){
-                    this.player.play(this.$store.state.activeRadio.url)
+                    this.$store.state.musicPlayer.play(this.$store.state.activeRadio.url)
                 } else {
-                    this.player.stop();
+                    this.$store.state.musicPlayer.stop();
                     this.$store.commit('setActiveRadio', activeRadio );
                 }
 
