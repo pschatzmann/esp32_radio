@@ -1,4 +1,4 @@
-# Radio Player
+# Vue Radio Player
 
 ## Project setup
 ```

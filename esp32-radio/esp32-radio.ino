@@ -4,23 +4,38 @@
 #include "ESPAsyncTunnel.h"
 #include "ArduinoJson.h"
 #include "esp32_bt_music_receiver.h"
+#include "AudioFileSourceICYStream.h"
+#include "AudioGeneratorMP3.h"
+#include "AudioOutputI2S.h"
 
 
 // WIFI
-const String ssid = "your ssid";
-const String password = "password";
+//const String ssid = "your ssid";
+//const String password = "password";
+const String ssid = "Phil Schatzmann (1)";
+const String password = "sabrina01";
 
 // Web Server & Sevices
 AsyncWebServer server(80);
-char* indexPath = "/esp32_radio/vue-radio/dist/index.html";
+String path = "/esp32_radio/vue-radio/dist";
+String indexPath = path+"/index.html";
+String root = "https://pschatzmann.github.io";
 
 // Music Player
 BlootoothA2DSink *a2d_sink;
 AudioGenerator *audio;
 AudioFileSourceHTTPStream *file;
 AudioOutputI2S *out;
-String bluetooth_name = "MusicPlayer"
+String bluetooth_name = "MusicPlayer";
 
+void startBluetooth() {
+    ESP_LOGI("[eisp32_radio]","bluetooth");    
+    if (a2d_sink==NULL){
+        a2d_sink = new BlootoothA2DSink();
+        a2d_sink->start((char*)bluetooth_name.c_str());
+        ESP_LOGI("[eisp32_radio]","bluetooth started");    
+    }
+}
 
 void setupWifi() {
   Serial.begin(115200);
@@ -37,14 +52,14 @@ void setupWifi() {
 
 void setupServer() {
   // rewrites
-  server.rewrite( "/", indexPath) ;
-  server.rewrite( "/index.html", indexPath);
-  server.rewrite( "/favicon.ico", "/esp32_radio/vue-radio/dist/favicon.ico");
+  server.rewrite( "/", indexPath.c_str()) ;
+  server.rewrite( "/index.html", indexPath.c_str());
+  server.rewrite( "/favicon.ico", (path+"/favicon.ico").c_str());
   
   // tunnel the index.html request 
-  server.on(indexPath, HTTP_GET, [&](AsyncWebServerRequest *request){
+  server.on(indexPath.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
       ClientRequestTunnel tunnel; 
-      if (tunnel.open("https://pschatzmann.github.io", request->url())) {
+      if (tunnel.open(root.c_str(), request->url())) {
           String result = tunnel.getString();
           request->send(200, "text/html", result);          
       } else {
@@ -53,7 +68,7 @@ void setupServer() {
   });
 
   server.on("/esp32_radio/*", HTTP_GET, [&](AsyncWebServerRequest *request){
-    String moved_url = "https://pschatzmann.github.io"+request->url();
+    String moved_url = root+request->url();
     request->redirect(moved_url);
   });
 
@@ -66,7 +81,7 @@ void setupServer() {
       doc["ssid"] = WiFi.SSID();
       doc["streaming"] = audio!=NULL;
       doc["bluetooth"] = a2d_sink!=NULL;
-      doc["bluetooth-name"] ) bluetooth_name;
+      doc["bluetooth_name"] = bluetooth_name;
       serializeJson(doc, *response);
       request->send(response);
   });
@@ -78,12 +93,7 @@ void setupServer() {
   });
 
   server.on("/service/bluetooth", HTTP_POST, [](AsyncWebServerRequest *request){
-      ESP_LOGI("[eisp32_radio]","bluetooth");    
-      if (a2d_sink==null){
-          a2d_sink = new BlootoothA2DSink();
-          a2d_sink->start(bluetooth_name);
-          ESP_LOGI("[eisp32_radio]","bluetooth started");    
-      }
+      startBluetooth();
   });
 
   server.on("/service/play", HTTP_POST, [](AsyncWebServerRequest *request){
@@ -93,16 +103,16 @@ void setupServer() {
         String url = p->value();
         ESP_LOGI("[eisp32_radio]","play url is %s",url);    
 
-        if (file!=null) {
+        if (file!=NULL) {
             delete(file);
         }
-        file = new AudioFileSourceICYStream(url);
+        file = new AudioFileSourceICYStream(url.c_str());
         file->SetReconnect(5, 0);
         
-        if (out == null){
+        if (out == NULL){
           out = new AudioOutputI2S(); // (0,1) is using the internal DAC
         }
-        if (audio==null){
+        if (audio==NULL){
           audio = new AudioGeneratorMP3();
         }
         audio->begin(file, out);
@@ -113,18 +123,17 @@ void setupServer() {
 
   server.on("/service/stop", HTTP_POST, [](AsyncWebServerRequest *request){
     ESP_LOGI("[eisp32_radio]","stop");    
-    if (a2d_sink!=null){
-        a2d_sink->stop();
+    if (a2d_sink!=NULL){
         delete(a2d_sink);
     }
-    if (audio!=null){
+    if (audio!=NULL){
         audio->stop();
         delete(audio);
     }
-    if (file!=null) {
+    if (file!=NULL) {
         delete(file);
     }
-    if (out!=null){
+    if (out!=NULL){
         delete(out);
     }
     ESP_LOGI("[eisp32_radio]","stoped");    
@@ -132,6 +141,9 @@ void setupServer() {
 
   // start server
   server.begin();
+  // automatically start Bluetooth
+  //startBluetooth();
+
 }
 
 

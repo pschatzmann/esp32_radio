@@ -7,8 +7,12 @@
                         <h2>ESP32 Setup</h2>
                     </v-card-title>
 
-                    <v-text-field label="Available Heap" readonly=true v-model="heap" />
-                    <v-text-field label="SSID" readonly=true v-model="ssid" />
+                    <v-text-field label="Available Heap" readonly=true v-model="ws.heap" />
+                    <v-text-field label="SSID" readonly=true v-model="ws.ssid" />
+                    <v-text-field label="Bluetooth Name" readonly=true v-model="ws.bluetooth_name" />
+                    <v-switch label="Streaming" readonly=true v-model="ws.streaming" />
+                    <v-switch label="Bluetooth" readonly=true v-model="ws.bluetooth" />
+
 
                 </v-card>
             </v-flex>
@@ -21,9 +25,14 @@
 import WebService from "@/services/WebService"
 export default {
     
-        data: () => ({             
-            heap: undefined,
-            ssid: 'not defined',
+        data: () => ({      
+            ws: {       
+                heap: null,
+                ssid: 'not defined',
+                streaming: false,
+                bluetooth: false,
+                bluetooth_name: 'not defined'
+            },
             iswebserviceok: true
         }),
 
@@ -32,8 +41,7 @@ export default {
             const ws = new WebService();
             ws.getInfo().then(result => {
                 console.log(result);
-                this.heap = result.data.heap;
-                this.ssid = result.data.ssid;
+                this.ws = result.data
             }).catch(error => {
                 console.error(error);
             })
