@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
             <v-row>
-                <v-col cols="20" sm="1" md="3"  v-for="item in $store.state.countries" :key="item.stationuuid" >
+                <v-col  v-for="item in $store.state.countries" :key="item.stationuuid" >
                     <v-hover  v-slot:default="{ hover }" close-delay="200">
                         <v-card outlined tiled class="mx-auto" max-width="200px" :elevation="hover ? 16 : 2" @click.native="doSelect(item.name)">
 

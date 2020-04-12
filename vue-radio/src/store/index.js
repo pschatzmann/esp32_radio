@@ -51,8 +51,8 @@ export default new Vuex.Store({
 
     setupGenres(context){
       if (context.state.genres.length==0) {
-        const ws = new WebService()
         const publicPath = context.state.publicPath;
+        const ws = new WebService()
         ws.getGenres(publicPath).then(result => {
             result.data.forEach(c => {c.imageUrl = publicPath+c.imageUrl;});
             context.commit('setGenres', result.data);
@@ -65,14 +65,14 @@ export default new Vuex.Store({
     setupCountries(context){  
         if (context.state.countries.length==0){
           const ws = new WebService()
-          ws.getCountry().then(result => {
+          const publicPath = context.state.publicPath;
+          ws.getCountry(publicPath).then(result => {
               var countryNames = {}
               for (var rec of result.data){
-                  countryNames[rec.cca2.toLowerCase()] = rec.name.common;
+                  countryNames[rec['alpha-2'].toLowerCase()] = rec.name;
               }
               ws.getCountryCodes().then(result1 => {
                 var countryData = result1.data
-                const publicPath = context.state.publicPath;
                 for (var c of countryData ){
                     c.iconUrl = publicPath+"flags/"+c.name.toLowerCase()+".png"
                     c.countryCode = c.name

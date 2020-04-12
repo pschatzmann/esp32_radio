@@ -1,3 +1,6 @@
+/**
+ * Music player API implementation which controls the ESP32 with the help of Webservice calls
+ */
 import axios from 'axios'
 
 export default class MusicPlayerESP32 {

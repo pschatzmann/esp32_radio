@@ -1,3 +1,6 @@
+<!-- 
+ -    Left Navigation Menu
+ -->
 <template>
     <v-navigation-drawer
       v-model="drawer"

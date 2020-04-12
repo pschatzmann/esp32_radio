@@ -1,3 +1,15 @@
+<!-- 
+ -    Provides a Start and stop button to control the playing of the radio
+ -->
+<script>
+export default {
+
+}
+</script>
+
+<style>
+
+</style> */
 <template>
         <v-btn fab small :color="active? 'red':'green'" dark v-on:click="active=!active" v-if="this.$store.state.activeRadio.url!=null">
               <v-icon v-if="!active">play_arrow</v-icon>

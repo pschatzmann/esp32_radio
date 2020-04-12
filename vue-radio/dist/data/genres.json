@@ -1,4 +1,5 @@
-[{"name":"African", "imageUrl":"genres/african.jpg"},
+[
+    {"name":"African", "imageUrl":"genres/african.jpg"},
     {"name":"Blues","imageUrl":"genres/blues.jpg"},
     {"name":"Caribbean","imageUrl":"genres/caribbean.jpg"},
     {"name":"Country","imageUrl":"genres/country.jpg"},
@@ -10,4 +11,5 @@
     {"name":"Pop","imageUrl":"genres/pop.jpg"},
     {"name":"Soul","imageUrl":"genres/soul.jpg"},
     {"name":"Rock","imageUrl":"genres/rock.jpg"},
-    {"name":"Classical","imageUrl":"genres/classic.jpg"}]
+    {"name":"Classical","imageUrl":"genres/classic.jpg"}
+]

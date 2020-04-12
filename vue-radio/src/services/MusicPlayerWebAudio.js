@@ -1,4 +1,7 @@
 
+/**
+ * Music player API implementation which uses the Browsers own Audio object
+ */
 import axios from 'axios'
 
 export default class MusicPlayer {

@@ -1,7 +1,7 @@
 <template>
     <v-container fluid>
             <v-row>
-                <v-col cols="20" sm="1" md="3"  v-for="item in this.radios" :key="item.stationuuid" >
+                <v-col  v-for="item in this.radios" :key="item.stationuuid" >
                     <v-hover  v-slot:default="{ hover }" close-delay="200">
                         <v-card outlined tiled class="mx-auto" v-bind:class="{ pulsate: isPlaying(item.stationuuid) }" max-width="200px" :elevation="hover ? 16 : 2" @click.native="play(item.url_resolved, item.stationuuid)">
 
@@ -17,7 +17,7 @@
                                     justify="center"
                                     >
                                     <v-img
-                                        :src=defaultImage
+                                        :src="require('@/assets/radio.svg')"
                                         height="200px"
                                         width="200px"/>
 
@@ -44,7 +44,6 @@
             radios: [],
             hover: false,
             player: new MusicPlayer(),
-            defaultImage: "http://icons.iconarchive.com/icons/webalys/kameleon.pics/128/Radio-4-icon.png"
         }),
 
         methods: {
