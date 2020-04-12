@@ -16,7 +16,15 @@ export default class MusicPlayer {
     getSources() {
         return [this.sourceESP, this.sourceWA]
     }
-    
+
+    setSourceESP(isESP){
+        if (isESP){
+            this.setSource(this.sourceESP)
+        } else {
+            this.setSource(this.MusicPlayerWebAudio)
+        }
+    }
+  
     setSource(selected){
         // stop any playing music
         this.stop();

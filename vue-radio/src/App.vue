@@ -21,6 +21,7 @@
 <script>
   import NavigationMenu from '@/components/NavigationMenu'
   import StartStopControl from '@/components/StartStop'
+  import MusicPlayer from '@/services/MusicPlayer'
 
   export default {
     props: {
@@ -35,6 +36,7 @@
     },
 
     mounted() {
+      this.$store.commit('setMusicPlayer', new MusicPlayer());
       this.$store.dispatch('setupTitle')
       this.$store.dispatch('setupGenres')
       this.$store.dispatch('setupCountries')

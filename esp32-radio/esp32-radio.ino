@@ -47,7 +47,7 @@ void stopBluetooth() {
   ESP_LOGI("[eisp32_radio]","stoped");    
 }
 
-void startPlayer(String url) {
+void startStreaming(String url) {
   ESP_LOGI("[eisp32_radio]","play");    
   
   if (file!=NULL) {
@@ -67,7 +67,7 @@ void startPlayer(String url) {
   
 }
 
-void stopPlayer() {
+void stopStreaming() {
   if (audio!=NULL){
       audio->stop();
       delete(audio);
@@ -103,6 +103,7 @@ boolean isStart(AsyncWebServerRequest *request) {
           start = false;
       }
     }
+    ESP_LOGI("[eisp32_radio]","isStart -> %s",start?"true":false);    
     return start;
 }
 
@@ -174,21 +175,21 @@ void setupServer() {
       sendResponse(request);
   });
 
-  server.on("/service/player", HTTP_POST, [](AsyncWebServerRequest *request){
+  server.on("/service/streaming", HTTP_POST, [](AsyncWebServerRequest *request){
       bool start = isStart(request);
       String url = getMusicURL(request);
 
       if (start){
-        startPlayer(url);
+        startStreaming(url);
       } else {
-        stopPlayer();
+        stopStreaming();
       }
 
       sendResponse(request);
   });
 
   server.on("/service/stop", HTTP_POST, [](AsyncWebServerRequest *request){
-    stopPlayer();
+    stopStreaming();
     stopBluetooth();
   });
 

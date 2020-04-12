@@ -10,6 +10,7 @@
                         <v-text-field label="Available Heap" readonly=true v-model="ws.heap" />
                         <v-text-field label="SSID" readonly=true v-model="ws.ssid" />
                         <v-text-field label="Bluetooth Name" readonly=true v-model="ws.bluetooth_name" />
+                        <v-text-field label="Music Player" readonly=true :value="$store.state.musicPlayer.getName()" /> 
                         <v-switch label="Streaming" @change="changeStreaming()" :error-messages="errors.streaming"  v-model="ws.streaming" />
                         <v-switch label="Bluetooth" @change="changeBT()"  :error-messages="errors.bluetooth" v-model="ws.bluetooth" />
                     </v-card-text>
@@ -21,7 +22,8 @@
 </template>
 
 <script>
-import WebService from "@/services/WebService"
+import WebService from '@/services/WebService'
+
 export default {
     
         data: () => ({      
@@ -34,37 +36,37 @@ export default {
             },
             errors: {
                 streaming: null,
-                bluetooth: null
+                bluetooth: null,
             },
-            iswebserviceok: true,
-            service: new  WebService()
 
         }),
 
         methods: {
             changeStreaming() {
-                this.service.postStreaming(this.ws.streaming ).then(result => {
+                new WebService().postStreaming(this.ws.streaming ).then(result => {
                     console.log(result);
                     this.ws = result.data
                     this.errors.streaming = ""
+                    // when we are streaming we use the ESP player implementation
+                    this.$store.state.musicPlayer.setSourceESP(this.ws.streaming)
                 }).catch(error => {
                     this.ws.streaming = !this.ws.streaming;
+                    this.$store.state.musicPlayer.setSourceESP(this.ws.streaming)
                     this.errors.streaming = "Streaming Service failed"
                     console.error(error);
                 })
             },
             
-            changeBT(){
-                this.service.postBluetooth(this.ws.bluetooth ).then(result => {
+            changeBT() {
+                this.$store.state.musicPlayer.setSourceESP(false)
+                new WebService().postBluetooth(this.ws.bluetooth ).then(result => {
                     console.log(result);
                     this.ws = result.data
                     this.errors.bluetooth = ""
-
                 }).catch(error => {
                     this.ws.bluetooth = !this.ws.bluetooth;
                     console.error(error);
                     this.errors.bluetooth = "Bluetooth Service failed"
-
                 })
             },
             
@@ -72,7 +74,7 @@ export default {
 
         mounted() {
             console.log("Info mounted");
-            this.service.getInfo().then(result => {
+            new WebService().getInfo().then(result => {
                 console.log(result);
                 this.ws = result.data
             }).catch(error => {
@@ -82,10 +84,3 @@ export default {
     }
 </script>
 
-<style scoped>
-    .formPadding {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-
-</style>

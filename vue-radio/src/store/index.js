@@ -14,7 +14,9 @@ export default new Vuex.Store({
     publicPath: process.env.BASE_URL,
     drawer: null,
     activeRadio: {id:null, active:false, url:null},
-    radios: {}
+    radios: {},
+    musicPlayer: null,
+
   },
   mutations: {
     setDrawer(state, drawer){
@@ -44,7 +46,12 @@ export default new Vuex.Store({
     setESP32Title(state) {
       state.title = 'ESP32 Radio Player';
       state.esp32 = true;
+    },
+
+    setMusicPlayer(state,musicPlayer) {
+      state.musicPlayer = musicPlayer;
     }
+
 
   },
   actions: {
