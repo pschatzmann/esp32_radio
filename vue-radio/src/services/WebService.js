@@ -29,6 +29,16 @@ export default class WebService {
         var url = "https://de1.api.radio-browser.info/json/stations/search?"+field+"="+value+"&codec=MP3"
         return await axios.get(url);
     }
+
+    async postBluetooth(active) {
+        var action = active ? "start" : "stop"
+        return await axios.post("/service/bluetooth",{action: action})
+    }
+
+    async postStreaming(active) {
+        var action = active ? "start" : "stop"
+        return await axios.post("/service/streaming",{action: action})
+    }
     
 
 }

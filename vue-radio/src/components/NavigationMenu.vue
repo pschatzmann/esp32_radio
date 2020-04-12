@@ -46,7 +46,7 @@
         </v-list-item>
 
         <!-- Only available if started from  ESP32 -->
-        <v-list-item to="/setup" v-if="$store.state.esp32">
+        <v-list-item to="/setup" v-if="$store.state.esp32"> <!-- -->
             <v-list-item-action>
                 <v-icon>settings</v-icon>
             </v-list-item-action>

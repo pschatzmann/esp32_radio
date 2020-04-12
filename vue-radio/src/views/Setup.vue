@@ -6,14 +6,13 @@
                     <v-card-title>
                         <h2>ESP32 Setup</h2>
                     </v-card-title>
-
-                    <v-text-field label="Available Heap" readonly=true v-model="ws.heap" />
-                    <v-text-field label="SSID" readonly=true v-model="ws.ssid" />
-                    <v-text-field label="Bluetooth Name" readonly=true v-model="ws.bluetooth_name" />
-                    <v-switch label="Streaming" readonly=true v-model="ws.streaming" />
-                    <v-switch label="Bluetooth" readonly=true v-model="ws.bluetooth" />
-
-
+                    <v-card-text >
+                        <v-text-field label="Available Heap" readonly=true v-model="ws.heap" />
+                        <v-text-field label="SSID" readonly=true v-model="ws.ssid" />
+                        <v-text-field label="Bluetooth Name" readonly=true v-model="ws.bluetooth_name" />
+                        <v-switch label="Streaming" @change="changeStreaming()" :error-messages="errors.streaming"  v-model="ws.streaming" />
+                        <v-switch label="Bluetooth" @change="changeBT()"  :error-messages="errors.bluetooth" v-model="ws.bluetooth" />
+                    </v-card-text>
                 </v-card>
             </v-flex>
 
@@ -33,13 +32,47 @@ export default {
                 bluetooth: false,
                 bluetooth_name: 'not defined'
             },
-            iswebserviceok: true
+            errors: {
+                streaming: null,
+                bluetooth: null
+            },
+            iswebserviceok: true,
+            service: new  WebService()
+
         }),
+
+        methods: {
+            changeStreaming() {
+                this.service.postStreaming(this.ws.streaming ).then(result => {
+                    console.log(result);
+                    this.ws = result.data
+                    this.errors.streaming = ""
+                }).catch(error => {
+                    this.ws.streaming = !this.ws.streaming;
+                    this.errors.streaming = "Streaming Service failed"
+                    console.error(error);
+                })
+            },
+            
+            changeBT(){
+                this.service.postBluetooth(this.ws.bluetooth ).then(result => {
+                    console.log(result);
+                    this.ws = result.data
+                    this.errors.bluetooth = ""
+
+                }).catch(error => {
+                    this.ws.bluetooth = !this.ws.bluetooth;
+                    console.error(error);
+                    this.errors.bluetooth = "Bluetooth Service failed"
+
+                })
+            },
+            
+        },
 
         mounted() {
             console.log("Info mounted");
-            const ws = new WebService();
-            ws.getInfo().then(result => {
+            this.service.getInfo().then(result => {
                 console.log(result);
                 this.ws = result.data
             }).catch(error => {
@@ -48,3 +81,11 @@ export default {
         }
     }
 </script>
+
+<style scoped>
+    .formPadding {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+</style>
