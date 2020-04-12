@@ -3,7 +3,7 @@
         <v-card>
             <v-container fluid>
 
-            <h4>Radio Player for the ESP32</h4><p/>
+            <h4>Radio Player</h4><p/>
             I wanted to have a nice looking Radio Player that is working together with an ESP32 Micro Controller. <p/>
             Here is the result: The GUI was written with Vue.js. I am using <a href="https://github.com/segler-alex/radiobrowser-api-rust">radiobrowser-api-rust</a>
             to find the Radio Stations - so many thanks to Alex Segler for providing this project.<p/>
