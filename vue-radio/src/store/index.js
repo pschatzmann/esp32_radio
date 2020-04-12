@@ -16,6 +16,7 @@ export default new Vuex.Store({
     activeRadio: {id:null, active:false, url:null},
     radios: {},
     musicPlayer: null,
+    blacklist: []
 
   },
   mutations: {
@@ -50,8 +51,11 @@ export default new Vuex.Store({
 
     setMusicPlayer(state,musicPlayer) {
       state.musicPlayer = musicPlayer;
-    }
+    },
 
+    setBlacklist(state,blacklist) {
+      state.blacklist = blacklist;
+    },
 
   },
   actions: {
@@ -129,7 +133,17 @@ export default new Vuex.Store({
         context.commit('setESP32Title');
         console.log(result)
       });
-    }
+    },
+
+    setupBlacklist(context){
+      const publicPath = context.state.publicPath;
+      const ws = new WebService()
+      ws.getBlacklist(publicPath).then(result => {
+          context.commit('setBlacklist', result.data);
+      }, error => {
+          console.error(error);
+      });
+    },
 
   },
   modules: {

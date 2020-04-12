@@ -17,6 +17,10 @@ export default class WebService {
         return await axios.get( publicPath+"data/countries.json")
     }
 
+    async getBlacklist(publicPath) {
+        return await axios.get( publicPath+"data/blacklist.json")
+    }
+
     async getCountryCodes() {
         return await axios.get( "https://de1.api.radio-browser.info/json/countrycodes?hidebroken=true")
     }

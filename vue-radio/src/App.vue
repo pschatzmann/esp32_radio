@@ -37,6 +37,7 @@
 
     mounted() {
       this.$store.commit('setMusicPlayer', new MusicPlayer());
+      this.$store.dispatch('setupBlacklist')
       this.$store.dispatch('setupTitle')
       this.$store.dispatch('setupGenres')
       this.$store.dispatch('setupCountries')

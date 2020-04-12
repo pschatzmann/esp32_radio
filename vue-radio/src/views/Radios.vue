@@ -74,6 +74,9 @@
                     const ws = new WebService()
                     ws.getRadios(field, value).then(result => {
                         this.radios = result.data
+                            .filter(rec => rec.lastcheckok==1 && !this.$store.state.blacklist.includes(rec.stationuuid))
+                            .sort((c1, c2) => c2.clickcount - c1.clickcount)
+
                         this.$store.commit('setRadios', {id:field+value, value:this.radios});
                     }).catch(error => {
                         console.error(error)
