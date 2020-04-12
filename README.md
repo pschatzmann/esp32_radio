@@ -1,5 +1,11 @@
-# Esp32_Radio
+# Vue Radio
 
-Bluetooth Receiver and Musing Streaming for the ESP32# esp32_radio
+I wanted to have a nice looking Radio Player that is working together with an ESP32 Micro Controller.
+Here is the result: The GUI was written with Vue.js. I am using radiobrowser-api-rust to find the Radio Stations - so many thanks to Alex Segler for providing this project.
+
+The Micro Controller is controlled by a Webservice and can provide two output modes: you can stream the Radios direcly or you can activate Bluetooth and stream the Radios from your GUI device via Bluetooth.
+
+Of cause you can also enjoy this player without an ESP32:
+
 https://pschatzmann.github.io/esp32_radio/vue-radio/dist/index.html#/
 
