@@ -127,16 +127,7 @@ export default new Vuex.Store({
 
             context.commit('setHome', home);
 
-            // ws.getRadios('countrycode', countryCode).then(result => {
-            //     const radios = result.data
-            //     const id = 'countrycode'+ countryCode
-            //     context.commit('setRadios', {id:id, value:radios});
-
-            // }).catch(error => {
-            //     console.error(error)
-            // })
-
-        }).catch(error => {
+          }).catch(error => {
             console.error(error)
         })
       }
