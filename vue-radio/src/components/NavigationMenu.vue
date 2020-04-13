@@ -36,15 +36,6 @@
             </v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/about">
-            <v-list-item-action>
-                <v-icon>info</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-                <v-list-item-title>About</v-list-item-title>
-            </v-list-item-content>
-        </v-list-item>
-
         <!-- Only available if started from  ESP32 -->
         <v-list-item to="/setup" v-if="$store.state.esp32" > <!--  -->
             <v-list-item-action>
@@ -54,7 +45,18 @@
                 <v-list-item-title>Setup</v-list-item-title>
             </v-list-item-content>
         </v-list-item>
+
+        <v-list-item to="/about">
+            <v-list-item-action>
+                <v-icon>info</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+                <v-list-item-title>About</v-list-item-title>
+            </v-list-item-content>
+        </v-list-item>
+
       </v-list>
+
     </v-navigation-drawer>
 </template>
 

@@ -4,7 +4,7 @@
             <v-flex xs11>
                 <v-card hover>
                     <v-card-title>
-                        <h2>ESP32 Setup</h2>
+                        <h2>Setup</h2>
                     </v-card-title>
                     <v-card-text >
                         <v-text-field label="Available Heap" readonly=true v-model="ws.heap" />

@@ -36,13 +36,18 @@ export default class WebService {
 
     async postBluetooth(active) {
         var action = active ? "start" : "stop"
-        return await axios.post("/service/bluetooth",{action: action})
+        return await axios.post('/service/bluetooth/'+action)
     }
 
-    async postStreaming(active) {
+    async postStreaming(active, url) {
         var action = active ? "start" : "stop"
-        return await axios.post("/service/streaming",{action: action})
+        return await axios.post('/service/streaming'+action, {'url': url})
     }
+
+    async getRadioInfo() {
+        return await axios.get("/service/status");
+    }
+
     
 
 }

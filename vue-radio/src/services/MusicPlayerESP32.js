@@ -1,11 +1,12 @@
 /**
  * Music player API implementation which controls the ESP32 with the help of Webservice calls
  */
-import axios from 'axios'
+import WebService from "@/services/WebService"
 
 export default class MusicPlayerESP32 {
     constructor(){
         MusicPlayerESP32.isPlaying = false;
+        this.service = new WebService()
     }
 
     getName() {
@@ -16,17 +17,18 @@ export default class MusicPlayerESP32 {
     }
 
     async play(url){
-        MusicPlayerESP32.isPlaying = false;
-        return await axios.post("/service/play", {"url": url})
+        MusicPlayerESP32.isPlaying = true;
+        var response = await this.service.postStreaming(MusicPlayerESP32.isPlaying, url)
+        return response.status == 200 ? response.data.streaming : false
     }
 
     async stop() {
         MusicPlayerESP32.isPlaying = false;
-        return await axios.post("/service/stop");
+        return await this.service.postStreaming(MusicPlayerESP32.isPlaying, null)
     }
 
     async getInfo() {
-        return await axios.get("/service/status");
+        return await this.service.getRadioInfo();
     }
 
     isPlaying(){
