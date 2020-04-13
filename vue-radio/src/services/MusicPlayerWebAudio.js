@@ -22,19 +22,14 @@ export default class MusicPlayer {
 
     async play(url){
         this.stop();
-        var urls = []
-        urls.push(url.replace("http:","https:"))
-        urls.push(url.replace("https:","http:"))
-        for (var u of urls) {
-            try {
-                MusicPlayer.audio = new Audio(u);
-                await MusicPlayer.audio.play();
-                MusicPlayer.isPlaying = true
-                console.info("MusicPlayer -> OK")
-                return MusicPlayer.isPlaying
-            } catch(error){
-                console.error(error)
-            }
+        try {
+            MusicPlayer.audio = new Audio(url);
+            await MusicPlayer.audio.play();
+            MusicPlayer.isPlaying = true
+            console.info("MusicPlayer -> OK")
+            return MusicPlayer.isPlaying
+        } catch(error){
+            console.error(error)
         }
         return MusicPlayer.isPlaying
     }

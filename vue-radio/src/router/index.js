@@ -1,10 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Radios from '../views/Radios'
-import Countries from '../views/Countries'
-import Genres from '../views/Genres'
 import About from '../views/About'
-import Setup from '../views/Setup'
 import store from '@/store/index';
 
 Vue.use(VueRouter)
@@ -13,45 +9,45 @@ Vue.use(VueRouter)
   {
     path: '/',
     name: 'Genres',
-    component: Genres
+    component:  () => import('../views/Genres'),
   },
   {
     path: '/genres',
     name: 'Genres',
-    component: Genres
+    component:  () => import('../views/Genres'),
   },
   {
     path: '/genres/:id',
     name: 'Genre',
-    component: Radios,
+    component:  () => import('../views/Radios'),
     props: true, 
   },
   {
     path: '/countries',
     name: 'Countries',
-    component: Countries
+    component:  () => import('../views/Countries'),
   },
   {
     path: '/countries/:id',
     name: 'Country',
-    component: Radios,
+    component:  () => import('../views/Radios'),
     props: true, 
   },
   {
     path: '/home/:id',
     name: 'Radios',
-    component: Radios,
+    component:  () => import('../views/Radios'),
     props: true, 
   },
   {
     path: '/about',
     name: 'About',
-    component: About,
+    component:  () => import('../views/About'),
   },
   {
     path: '/setup',
     name: 'Setup',
-    component: Setup,
+    component: () => import('../views/Setup'),
   },
 
 ]

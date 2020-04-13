@@ -46,6 +46,12 @@
 
         methods: {
             play: function (url, id) {
+                // stop current stream
+                var current = this.$store.state.activeRadio
+                current.active = false;
+                this.$store.commit('setActiveRadio', current );
+
+                // set new radio
                 var result = {};
                 result.id = id;
                 result.url = url;
