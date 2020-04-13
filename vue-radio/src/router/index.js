@@ -5,6 +5,7 @@ import Countries from '../views/Countries'
 import Genres from '../views/Genres'
 import About from '../views/About'
 import Setup from '../views/Setup'
+import store from '@/store/index';
 
 Vue.use(VueRouter)
 
@@ -58,5 +59,15 @@ Vue.use(VueRouter)
 const router = new VueRouter({
   routes
 })
+
+router.beforeResolve((to, from, next) => {
+  // If this isn't an initial page load.
+  if (to.name) {
+      // Start the route progress bar.
+      //store.commit('setLoading', true);
+  }
+  next()
+})
+
 
 export default router

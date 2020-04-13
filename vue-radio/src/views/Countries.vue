@@ -26,14 +26,19 @@
 <script>
 
 export default {
-        data: () => ({             
-        }),
-        methods: {
-            doSelect: function (search) {
-                this.$router.push({ path: '/countries/'+search.toLowerCase() })
-            }
+    data: () => ({             
+    }),
+
+    methods: {
+        doSelect: function (search) {
+            this.$router.push({ path: '/countries/'+search.toLowerCase() })
         }
-  }
+    },
+
+    mounted() {
+        this.$store.dispatch('setupCountries')
+    }
+}
 
 </script>
 

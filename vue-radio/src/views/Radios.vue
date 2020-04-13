@@ -70,7 +70,10 @@
                 var temp = this.$store.state.radios[field+value]
                 if (temp!=null){
                     this.radios = temp;
+                    this.$store.commit('setLoading', false);
+
                 } else {
+                    this.$store.commit('setLoading', true);
                     const ws = new WebService()
                     ws.getRadios(field, value).then(result => {
                         this.radios = result.data
@@ -78,8 +81,11 @@
                             .sort((c1, c2) => c2.clickcount - c1.clickcount)
 
                         this.$store.commit('setRadios', {id:field+value, value:this.radios});
+                        this.$store.commit('setLoading', false);
+
                     }).catch(error => {
                         console.error(error)
+                        this.$store.commit('setLoading', false);
                     })
                 }
             },
@@ -90,10 +96,11 @@
         },
 
         mounted() {
+            this.$store.commit('setLoading', true);
             var searchTerm = this.$router.currentRoute.params['id']=== undefined ? "blues": this.$router.currentRoute.params.id;
             var field = this.$router.currentRoute.name == 'Genre' ? 'tag' : 'countrycode'
             this.getRadios(field, searchTerm);
-        }
+        },
     }
 
 </script>

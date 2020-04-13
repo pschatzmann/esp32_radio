@@ -6,6 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    loading: true,
     countries: [],
     genres: [],
     homeCountry: null,
@@ -57,24 +58,34 @@ export default new Vuex.Store({
       state.blacklist = blacklist;
     },
 
+    setLoading(state,loading) {
+      state.loading = loading;
+    },
+
   },
   actions: {
 
     setupGenres(context){
       if (context.state.genres.length==0) {
+        context.commit('setLoading', true);
+
         const publicPath = context.state.publicPath;
         const ws = new WebService()
         ws.getGenres(publicPath).then(result => {
             result.data.forEach(c => {c.imageUrl = publicPath+c.imageUrl;});
             context.commit('setGenres', result.data);
-        }, error => {
+            context.commit('setLoading', false);
+          }, error => {
             console.error(error);
-        });
+            context.commit('setLoading', false);
+          });
       }
     },
 
     setupCountries(context){  
         if (context.state.countries.length==0){
+          context.commit('setLoading', true);
+
           const ws = new WebService()
           const publicPath = context.state.publicPath;
           ws.getCountry(publicPath).then(result => {
@@ -90,12 +101,16 @@ export default new Vuex.Store({
                     c.counrtyName = countryNames[c.name.toLowerCase()]
                 }
                 context.commit('setCountries', countryData);
+                context.commit('setLoading', false);
+
               }).catch(error => {
                 console.error(error)
+                context.commit('setLoading', false);
               })        
           }).catch(error => {
               console.error(error)
-          })
+              context.commit('setLoading', false);
+            })
         }
     },
 
@@ -112,14 +127,14 @@ export default new Vuex.Store({
 
             context.commit('setHome', home);
 
-            ws.getRadios('countrycode', countryCode).then(result => {
-                const radios = result.data
-                const id = 'countrycode'+ countryCode
-                context.commit('setRadios', {id:id, value:radios});
+            // ws.getRadios('countrycode', countryCode).then(result => {
+            //     const radios = result.data
+            //     const id = 'countrycode'+ countryCode
+            //     context.commit('setRadios', {id:id, value:radios});
 
-            }).catch(error => {
-                console.error(error)
-            })
+            // }).catch(error => {
+            //     console.error(error)
+            // })
 
         }).catch(error => {
             console.error(error)

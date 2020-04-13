@@ -30,6 +30,10 @@ export default {
         doSelect: function (search) {
             this.$router.push({ path: '/genres/'+search.toLowerCase() })
         }
+    },
+
+    mounted() {
+        this.$store.dispatch('setupGenres')
     }
   }
 
