@@ -7,5 +7,5 @@ The Micro Controller is controlled by a Webservice and can provide two output mo
 
 Of cause you can also enjoy this player without an ESP32:
 
-https://pschatzmann.github.io/esp32_radio/vue-radio/dist/index.html#/
+http://github.pschatzmann.ch/esp32_radio
 
