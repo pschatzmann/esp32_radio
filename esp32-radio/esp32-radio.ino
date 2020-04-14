@@ -7,8 +7,10 @@
 
 
 // WIFI
-const String ssid = "your ssid";
-const String password = "password";
+//const String ssid = "your ssid";
+//const String password = "password";
+const String ssid = "Phil Schatzmann (1)";
+const String password = "sabrina01";
 
 // Web Server & Sevices
 AsyncWebServer server(80);
@@ -101,7 +103,7 @@ void setupServer() {
 
   // start server
   server.begin();
-  // automatically start Bluetooth
+  // automatically start Bluetooth ?
   //radio.startBluetooth();
 
 }

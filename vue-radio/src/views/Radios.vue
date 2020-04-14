@@ -62,19 +62,19 @@
 
             play: function (url, id) {
                 // set new radio
-                var result = {}
-                result.active = false
-                result.id = id
-                result.url = url
-                result.error = false
-                this.$store.commit('setActiveRadio', result );
                 var player = this.$store.state.musicPlayer;
+                var result = this.$store.state.activeRadio
                 if (this.isPlaying(id)) {
                     player.stop();
                     result.active = false;
                     result.error = false
                     this.$store.commit('setActiveRadio', result );
                 } else {
+                    result.active = false
+                    result.id = id
+                    result.url = url
+                    result.error = false
+                    this.$store.commit('setActiveRadio', result );
                     player.play(url).then(playing => {
                         result.active = playing;
                         result.error = !playing
