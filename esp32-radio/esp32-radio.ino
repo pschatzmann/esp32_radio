@@ -102,7 +102,7 @@ void setupServer() {
   // start server
   server.begin();
   // automatically start Bluetooth
-  radio.startBluetooth();
+  //radio.startBluetooth();
 
 }
 

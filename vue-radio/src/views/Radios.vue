@@ -3,7 +3,7 @@
             <v-row>
                 <v-col  v-for="item in this.radios" :key="item.stationuuid" >
                     <v-hover  v-slot:default="{ hover }" close-delay="200">
-                        <v-card outlined tiled class="mx-auto" v-bind:class="{ pulsate: isPlaying(item.stationuuid) }" max-width="200px" :elevation="hover ? 16 : 2" @click.native="play(item.url_resolved, item.stationuuid)">
+                        <v-card outlined tiled class="mx-auto" v-bind:class="cardStyle(item)" max-width="200px" :elevation="hover ? 16 : 2" @click.native="play(item.url_resolved, item.stationuuid)">
 
                             <v-img 
                                 :src="item.favicon"
@@ -44,29 +44,50 @@
             hover: false,
         }),
 
-        methods: {
-            play: function (url, id) {
-                // stop current stream
-                var current = this.$store.state.activeRadio
-                current.active = false;
-                this.$store.commit('setActiveRadio', current );
+        computed: {
 
+        },
+
+        methods: {
+            // a computed getter
+            cardStyle: function (item) {
+            // `this` points to the vm instance
+                var result = []
+                if (this.isSelected(item.stationuuid))
+                    result.push('selected')
+                if (this.isPlaying(item.stationuuid))
+                    result.push('pulsate')
+                return result;
+            },
+
+            play: function (url, id) {
                 // set new radio
-                var result = {};
-                result.id = id;
-                result.url = url;
+                var result = {}
+                result.active = false
+                result.id = id
+                result.url = url
+                result.error = false
+                this.$store.commit('setActiveRadio', result );
                 var player = this.$store.state.musicPlayer;
                 if (this.isPlaying(id)) {
                     player.stop();
                     result.active = false;
+                    result.error = false
                     this.$store.commit('setActiveRadio', result );
                 } else {
                     player.play(url).then(playing => {
                         result.active = playing;
+                        result.error = !playing
                         this.$store.commit('setActiveRadio', result );
                     }, error => {
+                        result.active = false;
+                        result.error = true
+                        this.$store.commit('setActiveRadio', result );
                         console.error(error)
                     }).catch(e => {
+                        result.active = false;
+                        result.error = true
+                        this.$store.commit('setActiveRadio', result );
                         console.log(e);
                     });
                 }
@@ -96,6 +117,10 @@
                 }
             },
 
+            isSelected(id){
+                return this.$store.state.activeRadio.id==id
+            },
+
             isPlaying(id){
                 return this.$store.state.activeRadio.active && this.$store.state.activeRadio.id==id
             }
@@ -114,6 +139,10 @@
 <style scoped>
     .v-card {
         cursor: pointer;
+    }
+
+    .selected {
+        background-color: darkgrey;
     }
 
     .pulsate {

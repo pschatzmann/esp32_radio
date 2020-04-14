@@ -11,17 +11,32 @@ export default {
 
 </style> */
 <template>
-        <v-btn fab small :color="active? 'red':'green'" dark v-on:click="active=!active" v-if="this.$store.state.activeRadio.url!=null">
+    <div>
+        <v-btn fab small :color="active? 'red':'green'" dark 
+            v-on:click="active=!active" 
+            v-if="$store.state.activeRadio.url!=null && !$store.state.activeRadio.error">
               <v-icon v-if="!active">play_arrow</v-icon>
               <v-icon v-if="active">stop</v-icon>
         </v-btn>
 
+        <v-tooltip left v-if="$store.state.activeRadio.error">
+            <template v-slot:activator="{ on }">
+                <v-icon color="red" v-on="on">
+                    block
+                </v-icon>
+            </template>
+            <span>The Stream is temporarily not available</span>
+        </v-tooltip>
+
+
+    </div>
 </template>
 
 <script>
 
   export default {
-    data: () => ({             
+    data: () => ({      
+        show: false,
     }),
 
     computed: {

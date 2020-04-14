@@ -38,6 +38,7 @@ export default {
                 streaming: null,
                 bluetooth: null,
             },
+            timer: ''
 
         }),
 
@@ -69,22 +70,29 @@ export default {
                     this.errors.bluetooth = "Bluetooth Service failed"
                 })
             },
+
+            getInfo() {
+                new WebService().getInfo().then(result => {
+                    console.log(result);
+                    this.ws = result.data
+                }).catch(error => {
+                    console.error(error);
+                })
+            },
+            cancelAutoUpdate () { 
+                clearInterval(this.timer)
+            }
             
         },
 
-        mounted() {
-            console.log("Info mounted");
-            this.$store.commit('setLoading', true);
-            new WebService().getInfo().then(result => {
-                console.log(result);
-                this.ws = result.data
-                this.$store.commit('setLoading', false);
-
-            }).catch(error => {
-                this.$store.commit('setLoading', false);
-                console.error(error);
-            })
+        created () {
+            this.getInfo();
+            this.timer = setInterval(this.getInfo, 50000)
         },
+
+        beforeDestroy () {
+            clearInterval(this.timer)
+        }
     }
 </script>
 
