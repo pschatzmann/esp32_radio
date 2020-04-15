@@ -28,6 +28,7 @@
 const String ssid = "your ssid";
 const String password = "password";
 
+
 // Web Server & Sevices
 AsyncWebServer server(80);
 String path = "/esp32_radio/vue-radio/dist";
@@ -60,6 +61,23 @@ void setupServer() {
   server.rewrite( "/", indexPath.c_str()) ;
   server.rewrite( "/index.html", indexPath.c_str());
   server.rewrite( "/favicon.ico", iconPath.c_str());
+
+  // tunnel the index.html request: We avoid https because this is consuming too much memory
+  // so we get the index.html from a http source
+  server.on(indexPath.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
+      ClientRequestTunnel tunnel; 
+      if (tunnel.open(serverPathHttp.c_str(), request->url())) {
+          String result = tunnel.getString();
+          request->send(200, "text/html", result);          
+      } else {
+          request->send(tunnel.getHttpCode());
+      }
+  });
+
+  server.on(pathMatch.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
+    String moved_url = serverPath+request->url();
+    request->redirect(moved_url);
+  });
 
 
   // Generic Services
@@ -104,33 +122,11 @@ void setupServer() {
     radio.stopBluetooth();
   });
 
-  
-  // tunnel the index.html request. We need to avoid https because this is consuming too much memory
-  // so we get the index.html from a http source
-  server.on(serverPathHttp.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
-      ClientRequestTunnel tunnel; 
-      if (tunnel.open(serverPath.c_str(), request->url())) {
-          String result = tunnel.getString();
-          //request->send(200, "text/html", result); 
-          AsyncWebServerResponse *response = request->beginResponse(200, "text/html", result);
-          response->addHeader("Access-Control-Allow-Origin:","*");
-          request->send(response);
-         
-      } else {
-          request->send(tunnel.getHttpCode());
-      }
-  });
-
-  server.on(pathMatch.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
-    String moved_url = serverPath+request->url();
-    request->redirect(moved_url);
-  });
-
-
+ 
   // start server
   server.begin();
   // automatically start Bluetooth ?
-  //radio.startBluetooth();
+  radio.startBluetooth();
 
 }
 
