@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import WebService from "@/services/WebService"
+import MusicPlayerESP32 from "@/services/MusicPlayerESP32"
+import MusicPlayerWebAudio from "@/services/MusicPlayerWebAudio"
 
 Vue.use(Vuex)
 
@@ -17,6 +19,7 @@ export default new Vuex.Store({
     activeRadio: {id:null, active:false, url:null, error:false, name:''},
     radios: {},
     musicPlayer: null,
+    supportedMusicPlayers: [new MusicPlayerWebAudio(), new MusicPlayerESP32()],
     blacklist: []
 
   },
@@ -50,8 +53,9 @@ export default new Vuex.Store({
       state.esp32 = true;
     },
 
-    setMusicPlayer(state,musicPlayer) {
-      state.musicPlayer = musicPlayer;
+    setMusicPlayer(state, idx) {
+      state.musicPlayer = state.supportedMusicPlayers[idx];
+      state.musicPlayer.setup();
     },
 
     setBlacklist(state,blacklist) {

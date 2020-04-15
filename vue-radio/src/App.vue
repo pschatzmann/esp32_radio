@@ -34,7 +34,6 @@
         color="amber"
       ></v-progress-linear>
 
-
       <v-spacer/>
       <div class="radioTitle">
           {{ getRadioTitle() }}
@@ -51,7 +50,6 @@
 <script>
   import NavigationMenu from '@/components/NavigationMenu'
   import StartStopControl from '@/components/StartStop'
-  import MusicPlayer from '@/services/MusicPlayer'
 
   export default {
     props: {
@@ -74,7 +72,7 @@
     },
 
     mounted() {
-      this.$store.commit('setMusicPlayer', new MusicPlayer());
+      this.$store.commit('setMusicPlayer', 0);
       this.$store.dispatch('setupBlacklist')
       this.$store.dispatch('setupTitle')
       this.$store.dispatch('setupHomeCountry')

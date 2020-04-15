@@ -25,6 +25,7 @@ export default class MusicPlayer {
         if (MusicPlayer.isPlaying ===undefined){
             MusicPlayer.audio = null;
             MusicPlayer.isPlaying = false
+            this.service = new WebService()
         }
     }
 
@@ -33,7 +34,7 @@ export default class MusicPlayer {
     }
 
     async setup() {
-        return await new WebService().postBluetooth(true);
+        return await this.service.postBluetooth(true);
     }
 
     async play(url){
