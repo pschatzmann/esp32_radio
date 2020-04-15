@@ -22,6 +22,7 @@
 #ifndef _ESPAsyncTunnel_H_
 #define _ESPAsyncTunnel_H_
 
+#define SSL_BUFFER_LEN 2000
 
 /**
  * Http Client which returns the data from a remove Server

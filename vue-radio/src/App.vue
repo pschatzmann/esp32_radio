@@ -36,6 +36,9 @@
 
 
       <v-spacer/>
+      <div class="radioTitle">
+          {{ getRadioTitle() }}
+      </div>
       <start-stop-control/>
     </v-app-bar>
 
@@ -59,6 +62,14 @@
         toggleDrawer(){
             var newValue = !this.$store.state.drawer
             this.$store.commit('setDrawer', newValue );
+        },
+
+        getRadioTitle(){
+            var result = this.$store.state.activeRadio.name
+            if (result.length>50){
+                result = result.substring(0,50)+"..."
+            }
+            return result
         }
     },
 
@@ -78,3 +89,10 @@
 
 </script>
 
+<style scoped>
+    .radioTitle {
+        font-size: 11px;
+        font-style: italic;
+        padding-right: 14px;
+    }
+</style>

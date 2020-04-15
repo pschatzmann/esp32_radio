@@ -38,15 +38,20 @@ class Radio {
     String getMusicURL(uint8_t *data, size_t len);
     void sendResponse(AsyncWebServerRequest *request);
     void loop();
-    AudioGenerator *audio;
+    void recordActivity();
+    bool notActiveFor(unsigned long);
     
   private:
     // Music Player
     BlootoothA2DSink *a2d_sink;
-    AudioFileSourceHTTPStream *file;
-    AudioOutputI2S *out;
+    AudioGenerator *audio=NULL;
+    AudioFileSourceHTTPStream *file=NULL;
+    AudioOutputI2S *out=NULL;
     String bluetooth_name = "MusicPlayer";
     String musicUrl = "http://listen.181fm.com/181-blues_128k.mp3";
+    // timer
+    unsigned long lastActivity = millis();
+
 
 };
 

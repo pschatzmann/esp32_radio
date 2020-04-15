@@ -69,6 +69,10 @@ export default class MusicPlayer {
         return await this.source.getInfo();
     }
 
+    async setup() {
+        return this.source.setup()
+    }
+
     isPlaying(){
         return this.source.isPlaying();
     }

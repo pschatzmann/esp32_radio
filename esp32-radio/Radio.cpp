@@ -29,9 +29,12 @@ void Radio::startBluetooth() {
 }
 
 void Radio::stopBluetooth() {
-  if (a2d_sink!=NULL){
-      delete(a2d_sink);
+  try {
+      if (a2d_sink)
+        delete(a2d_sink);
       a2d_sink = NULL;
+  } catch (const std::exception& e) { 
+    ESP_LOGE("[eisp32_radio]","could not delete a2d_sink"); 
   }
   ESP_LOGI("[eisp32_radio]","stoped");    
 }
@@ -40,30 +43,53 @@ void Radio::startStreaming(String url) {
   ESP_LOGI("[eisp32_radio]","startStreaming: %s",url.c_str());    
   stopBluetooth();
   stopStreaming();
-  file = new AudioFileSourceICYStream(url.c_str());
+  if (file==NULL)
+    file = new AudioFileSourceICYStream(url.c_str());
   file->SetReconnect(5, 0);
-  
-  out = new AudioOutputI2S(); // (0,1) is using the internal DAC
-  audio = new AudioGeneratorMP3();
+
+  if (out==NULL)
+    out = new AudioOutputI2S(); // (0,1) is using the internal DAC
+  if (audio==NULL)
+    audio = new AudioGeneratorMP3();
   audio->begin(file, out);
   ESP_LOGI("[eisp32_radio]","play started");    
   
 }
 
 void Radio::stopStreaming() {
-  if (audio!=NULL){
+  try {
+    if (audio && audio->isRunning())
       audio->stop();
-      delete(audio);
-      audio = NULL;
+  } catch (const std::exception& e) { 
+    ESP_LOGE("[eisp32_radio]","could not stop audio"); 
   }
-  if (file!=NULL) {
-      delete(file);
+
+  try {
+      if (file)
+        delete(file);
       file = NULL;
+  } catch (const std::exception& e) { 
+    ESP_LOGE("[eisp32_radio]","could not free file"); 
   }
-  if (out!=NULL){
-      delete(out);
-      out = NULL;
-  }
+
+
+//  try {
+//    if(audio!=NULL)
+//      delete(audio);
+//    audio = NULL;
+//  } catch (const std::exception& e) { 
+//    ESP_LOGE("[eisp32_radio]","could not free out"); 
+//  }
+  
+
+//  try {
+//      if (out)
+//        delete(out);
+//      out = NULL;
+//  } catch (const std::exception& e) { 
+//    ESP_LOGE("[eisp32_radio]","could not free out"); 
+//  }
+  
   ESP_LOGI("[eisp32_radio]","stoped"); 
 }
 
@@ -98,12 +124,12 @@ String Radio::getMusicURL(uint8_t *data, size_t len) {
 }
 
 void Radio::sendResponse(AsyncWebServerRequest *request) {
-    ESP_LOGI("[eisp32_radio]","info");    
+    ESP_LOGI("[eisp32_radio]","sendResponse");    
     AsyncResponseStream *response = request->beginResponseStream("application/json");
     StaticJsonDocument<200> doc;
     doc["heap"] = ESP.getFreeHeap();
     doc["ssid"] = WiFi.SSID();
-    doc["streaming"] = audio!=NULL;
+    doc["streaming"] = file!=NULL;
     doc["bluetooth"] = a2d_sink!=NULL;
     doc["bluetooth_name"] = bluetooth_name;
     doc["stream"] = musicUrl;
@@ -111,8 +137,31 @@ void Radio::sendResponse(AsyncWebServerRequest *request) {
     request->send(response);
 }
 
+
 void Radio::loop(){
+  
   if (audio && audio->isRunning()) {
     audio->loop();
   }
+
+  // record activity every 10sec 
+  if (millis() / 10000 == 0){
+     if (file!=NULL && file->isOpen()){
+        recordActivity();
+     }
+     if (a2d_sink!=NULL && a2d_sink->get_audio_state()==ESP_A2D_AUDIO_STATE_STARTED){
+        recordActivity();
+     }  
+  }
+  
+}
+
+void Radio::recordActivity(){
+  ESP_LOGI("[eisp32_radio]","recordActivity");    
+  lastActivity = millis() / 1000; 
+}
+
+bool Radio::notActiveFor(unsigned long delaySec){
+  unsigned long current = millis() / 1000;
+  return (current - lastActivity) > delaySec;
 }

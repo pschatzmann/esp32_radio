@@ -14,6 +14,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+#define NDEBUG
 
 #include <vector>
 #include "AsyncTCP.h"
@@ -24,17 +25,17 @@
 
 
 // WIFI
-//const String ssid = "your ssid";
-//const String password = "password";
-const String ssid = "Phil Schatzmann (1)";
-const String password = "sabrina01";
+const String ssid = "your ssid";
+const String password = "password";
 
 // Web Server & Sevices
 AsyncWebServer server(80);
 String path = "/esp32_radio/vue-radio/dist";
 String pathMatch = "/esp32_radio/*";
+
 String indexPath = path+"/index.html";
 String iconPath = path+"/favicon.ico";
+String serverPathHttp = "http://github.pschatzmann.ch";
 String serverPath = "https://pschatzmann.github.io";
 
 // Radio
@@ -59,22 +60,7 @@ void setupServer() {
   server.rewrite( "/", indexPath.c_str()) ;
   server.rewrite( "/index.html", indexPath.c_str());
   server.rewrite( "/favicon.ico", iconPath.c_str());
-  
-  // tunnel the index.html request 
-  server.on(indexPath.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
-      ClientRequestTunnel tunnel; 
-      if (tunnel.open(serverPath.c_str(), request->url())) {
-          String result = tunnel.getString();
-          request->send(200, "text/html", result);          
-      } else {
-          request->send(tunnel.getHttpCode());
-      }
-  });
 
-  server.on(pathMatch.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
-    String moved_url = serverPath+request->url();
-    request->redirect(moved_url);
-  });
 
   // Generic Services
   server.on("/service/info", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -118,6 +104,29 @@ void setupServer() {
     radio.stopBluetooth();
   });
 
+  
+  // tunnel the index.html request. We need to avoid https because this is consuming too much memory
+  // so we get the index.html from a http source
+  server.on(serverPathHttp.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
+      ClientRequestTunnel tunnel; 
+      if (tunnel.open(serverPath.c_str(), request->url())) {
+          String result = tunnel.getString();
+          //request->send(200, "text/html", result); 
+          AsyncWebServerResponse *response = request->beginResponse(200, "text/html", result);
+          response->addHeader("Access-Control-Allow-Origin:","*");
+          request->send(response);
+         
+      } else {
+          request->send(tunnel.getHttpCode());
+      }
+  });
+
+  server.on(pathMatch.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
+    String moved_url = serverPath+request->url();
+    request->redirect(moved_url);
+  });
+
+
   // start server
   server.begin();
   // automatically start Bluetooth ?
@@ -130,6 +139,8 @@ void setup(){
   setupWifi();
   setupServer();
 
+  ESP_LOGI("[eisp32_radio]","free heep: %u", ESP.getFreeHeap());    
+  
   Serial.println();
   Serial.print("You can connect to ");
   Serial.println(WiFi.localIP());  
@@ -138,4 +149,5 @@ void setup(){
 
 void loop(){
   radio.loop();
+
 }

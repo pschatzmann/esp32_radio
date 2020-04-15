@@ -20,7 +20,7 @@
             <v-row>
                 <v-col  v-for="item in this.radios" :key="item.stationuuid" >
                     <v-hover  v-slot:default="{ hover }" close-delay="200">
-                        <v-card outlined tiled class="mx-auto" v-bind:class="cardStyle(item)" max-width="200px" :elevation="hover ? 16 : 2" @click.native="play(item.url_resolved, item.stationuuid)">
+                        <v-card outlined tiled class="mx-auto" v-bind:class="cardStyle(item)" max-width="200px" :elevation="hover ? 16 : 2" @click.native="play(item)">
 
                             <v-img 
                                 :src="item.favicon"
@@ -77,7 +77,10 @@
                 return result;
             },
 
-            play: function (url, id) {
+            play: function (item) {
+                var id =   item.stationuuid
+                var url = item.url_resolved
+
                 // set new radio
                 var player = this.$store.state.musicPlayer;
                 var result = this.$store.state.activeRadio
@@ -90,6 +93,7 @@
                     result.active = false
                     result.id = id
                     result.url = url
+                    result.name = item.name
                     result.error = false
                     this.$store.commit('setActiveRadio', result );
                     player.play(url).then(playing => {

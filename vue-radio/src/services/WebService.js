@@ -59,7 +59,7 @@ export default class WebService {
 
     async postStreaming(active, url) {
         var action = active ? "start" : "stop"
-        return await axios.post('/service/streaming'+action, {'url': url})
+        return await axios.post('/service/streaming/'+action, {'url': url})
     }
 
     async getRadioInfo() {

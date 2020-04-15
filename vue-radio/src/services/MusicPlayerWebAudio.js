@@ -18,7 +18,7 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import axios from 'axios'
+import WebService from "@/services/WebService"
 
 export default class MusicPlayer {
     constructor(){
@@ -33,7 +33,7 @@ export default class MusicPlayer {
     }
 
     async setup() {
-        return await axios.post("/service/bluetooth");
+        return await new WebService().postBluetooth(true);
     }
 
     async play(url){

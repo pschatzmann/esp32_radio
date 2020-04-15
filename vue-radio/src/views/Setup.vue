@@ -66,7 +66,7 @@ export default {
                     this.ws = result.data
                     this.errors.streaming = ""
                     // when we are streaming we use the ESP player implementation
-                    this.$store.state.musicPlayer.setSourceESP(this.ws.streaming)
+                    //this.$store.state.musicPlayer.setSourceESP(this.ws.streaming)
                 }).catch(error => {
                     this.ws.streaming = !this.ws.streaming;
                     this.$store.state.musicPlayer.setSourceESP(this.ws.streaming)
@@ -76,7 +76,7 @@ export default {
             },
             
             changeBT() {
-                this.$store.state.musicPlayer.setSourceESP(false)
+                //this.$store.state.musicPlayer.setSourceESP(false)
                 new WebService().postBluetooth(this.ws.bluetooth ).then(result => {
                     console.log(result);
                     this.ws = result.data
@@ -106,7 +106,7 @@ export default {
 
         created () {
             this.getInfo();
-            this.timer = setInterval(this.getInfo, 50000)
+            this.timer = setInterval(this.getInfo, 5000)
         },
 
         beforeDestroy () {
