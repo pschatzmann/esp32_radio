@@ -65,6 +65,7 @@ void setupServer() {
   // tunnel the index.html request: We avoid https because this is consuming too much memory
   // so we get the index.html from a http source
   server.on(indexPath.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
+      radio.recordActivity();
       ClientRequestTunnel tunnel; 
       if (tunnel.open(serverPathHttp.c_str(), request->url())) {
           String result = tunnel.getString();
@@ -82,51 +83,58 @@ void setupServer() {
 
   // Generic Services
   server.on("/service/info", HTTP_GET, [](AsyncWebServerRequest *request){
+      radio.recordActivity();
       ESP_LOGI("[eisp32_radio]","info");    
       radio.sendResponse(request);
   });
 
   //Shut down server
   server.on("/service/shutdown", HTTP_POST, [](AsyncWebServerRequest *request){
+      radio.recordActivity();
       ESP_LOGI("[eisp32_radio]","shutdown");    
       esp_deep_sleep_start();
   });
 
   server.on("/service/bluetooth/start", HTTP_POST, [](AsyncWebServerRequest *request){
+      radio.recordActivity();
       radio.startBluetooth();       
       radio.sendResponse(request);
   });
 
   server.on("/service/bluetooth/stop", HTTP_POST, [](AsyncWebServerRequest *request){
+      radio.recordActivity();
       radio.stopBluetooth();
       radio.sendResponse(request);
   });
 
 
   server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+    radio.recordActivity();
     if (request->url() == "/service/streaming/start") {
-        String url = radio.getMusicURL(data, len);        
-        radio.startStreaming(url);
-        radio.sendResponse(request);
+      String url = radio.getMusicURL(data, len);        
+      radio.startStreaming(url);
+      radio.sendResponse(request);
     }
   });
 
 
   server.on("/service/streaming/stop", HTTP_POST, [](AsyncWebServerRequest *request){
+      radio.recordActivity();
       radio.stopStreaming();
       radio.sendResponse(request);
   });
 
   server.on("/service/stop", HTTP_POST, [](AsyncWebServerRequest *request){
-    radio.stopStreaming();
-    radio.stopBluetooth();
+      radio.recordActivity();
+      radio.stopStreaming();
+      radio.stopBluetooth();
   });
 
  
   // start server
   server.begin();
   // automatically start Bluetooth ?
-  radio.startBluetooth();
+  //radio.startBluetooth();
 
 }
 
@@ -145,5 +153,12 @@ void setup(){
 
 void loop(){
   radio.loop();
+
+  // if not used for more then 10 min - we shut down
+  if (radio.notActiveFor(60*10)){
+      ESP_LOGI("[eisp32_radio]","shut down"); 
+      esp_deep_sleep_start();
+   
+  }
 
 }

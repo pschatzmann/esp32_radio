@@ -54,6 +54,9 @@ export default new Vuex.Store({
     },
 
     setMusicPlayer(state, idx) {
+      if (state.musicPlayer) {
+        state.musicPlayer.stop()
+      }
       state.musicPlayer = state.supportedMusicPlayers[idx];
       state.musicPlayer.setup();
     },

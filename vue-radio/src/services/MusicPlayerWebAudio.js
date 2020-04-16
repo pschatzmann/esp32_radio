@@ -38,22 +38,26 @@ export default class MusicPlayer {
     }
 
     async play(url){
-        this.stop();
+        await this.stop();
         try {
             MusicPlayer.audio = new Audio(url);
             await MusicPlayer.audio.play();
             MusicPlayer.isPlaying = true
             console.info("MusicPlayer -> OK")
-            return MusicPlayer.isPlaying
+            return  {url : url, playing:true }  
         } catch(error){
             console.error(error)
+            return  {url : url, playing:false } 
         }
-        return MusicPlayer.isPlaying
     }
 
     async stop() {
         if (MusicPlayer.audio!=null) {
-            MusicPlayer.audio.pause();
+            try {
+                MusicPlayer.audio.pause();
+            } catch(ex){
+                console.log.error(ex)
+            }
             MusicPlayer.audio = null;
         }
         MusicPlayer.isPlaying = false

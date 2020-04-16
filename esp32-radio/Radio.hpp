@@ -50,7 +50,8 @@ class Radio {
     String bluetooth_name = "MusicPlayer";
     String musicUrl = "http://listen.181fm.com/181-blues_128k.mp3";
     // timer
-    unsigned long lastActivity = millis();
+    unsigned long lastActivity = millis()/1000;
+    bool streamingReady = false;
 
 
 };

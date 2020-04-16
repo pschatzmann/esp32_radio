@@ -96,10 +96,13 @@
                     result.name = item.name
                     result.error = false
                     this.$store.commit('setActiveRadio', result );
-                    player.play(url).then(playing => {
-                        result.active = playing;
-                        result.error = !playing
-                        this.$store.commit('setActiveRadio', result );
+                    player.play(url).then(playResult => {
+                        // we ignore old requsts
+                        if (playResult.url == this.$store.state.activeRadio.url){
+                            result.active = playResult.playing;
+                            result.error = !playResult.playing
+                            this.$store.commit('setActiveRadio', result );
+                        }
                     }, error => {
                         result.active = false;
                         result.error = true
