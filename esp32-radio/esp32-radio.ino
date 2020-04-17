@@ -48,11 +48,12 @@ void setupWifi() {
   WiFi.begin(ssid.c_str(), password.c_str());
 
   Serial.print("Connecting");
-  while (WiFi.status() != WL_CONNECTED)
-  {
+  while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
+  // copy wifi
+  radio.setup();
 }
 
 
@@ -83,6 +84,7 @@ void setupServer() {
 
   // Generic Services
   server.on("/service/info", HTTP_GET, [](AsyncWebServerRequest *request){
+      ESP_LOGI("[eisp32_radio]","info");    
       radio.recordActivity();
       ESP_LOGI("[eisp32_radio]","info");    
       radio.sendResponse(request);
@@ -90,27 +92,35 @@ void setupServer() {
 
   //Shut down server
   server.on("/service/shutdown", HTTP_POST, [](AsyncWebServerRequest *request){
+      ESP_LOGI("[eisp32_radio]","shutdown");    
       radio.recordActivity();
       ESP_LOGI("[eisp32_radio]","shutdown");    
       esp_deep_sleep_start();
   });
 
   server.on("/service/bluetooth/start", HTTP_POST, [](AsyncWebServerRequest *request){
+      ESP_LOGI("[eisp32_radio]","bluetooth/start");    
       radio.recordActivity();
       radio.startBluetooth();       
       radio.sendResponse(request);
   });
 
   server.on("/service/bluetooth/stop", HTTP_POST, [](AsyncWebServerRequest *request){
+      ESP_LOGI("[eisp32_radio]","bluetooth/stop");    
       radio.recordActivity();
       radio.stopBluetooth();
       radio.sendResponse(request);
   });
 
+  server.on("/service/restart", HTTP_POST, [](AsyncWebServerRequest *request){
+      ESP_LOGI("[eisp32_radio]","restart");    
+      ESP.restart();
+  });
 
   server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
-    radio.recordActivity();
     if (request->url() == "/service/streaming/start") {
+      ESP_LOGI("[eisp32_radio]","onRequestBody");    
+      radio.recordActivity();
       String url = radio.getMusicURL(data, len);        
       radio.startStreaming(url);
       radio.sendResponse(request);
@@ -119,15 +129,10 @@ void setupServer() {
 
 
   server.on("/service/streaming/stop", HTTP_POST, [](AsyncWebServerRequest *request){
+      ESP_LOGI("[eisp32_radio]","streaming/stop");    
       radio.recordActivity();
       radio.stopStreaming();
       radio.sendResponse(request);
-  });
-
-  server.on("/service/stop", HTTP_POST, [](AsyncWebServerRequest *request){
-      radio.recordActivity();
-      radio.stopStreaming();
-      radio.stopBluetooth();
   });
 
  

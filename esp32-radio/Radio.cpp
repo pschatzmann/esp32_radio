@@ -18,6 +18,10 @@
 
 #include "Radio.hpp"
 
+void Radio::setup(){
+  ssid = WiFi.SSID();
+}
+
 void Radio::startBluetooth() {
   ESP_LOGI("[eisp32_radio]","bluetooth");    
   stopStreaming();
@@ -61,7 +65,7 @@ void Radio::startStreaming(String url) {
 void Radio::stopStreaming() {
   try {
     if (audio && audio->isRunning())
-      audio->stop();
+      audio->stop();      
   } catch (const std::exception& e) { 
     ESP_LOGE("[eisp32_radio]","could not stop audio"); 
   }
@@ -74,6 +78,22 @@ void Radio::stopStreaming() {
       file = NULL;
   } catch (const std::exception& e) { 
     ESP_LOGE("[eisp32_radio]","could not free file"); 
+  }
+
+  try {
+      if (audio)
+        delete(audio);
+      audio = NULL;
+  } catch (const std::exception& e) { 
+    ESP_LOGE("[eisp32_radio]","could not free audio"); 
+  }
+
+  try {
+      if (out)
+        delete(out);
+      out = NULL;
+  } catch (const std::exception& e) { 
+    ESP_LOGE("[eisp32_radio]","could not free out"); 
   }
   
   ESP_LOGI("[eisp32_radio]","stoped"); 
@@ -111,16 +131,20 @@ String Radio::getMusicURL(uint8_t *data, size_t len) {
 
 void Radio::sendResponse(AsyncWebServerRequest *request) {
     ESP_LOGI("[eisp32_radio]","sendResponse");    
-    AsyncResponseStream *response = request->beginResponseStream("application/json");
-    StaticJsonDocument<200> doc;
-    doc["heap"] = ESP.getFreeHeap();
-    doc["ssid"] = WiFi.SSID();
-    doc["streaming"] = file!=NULL;
-    doc["bluetooth"] = a2d_sink!=NULL;
-    doc["bluetooth_name"] = bluetooth_name;
-    doc["stream"] = musicUrl;
-    serializeJson(doc, *response);
-    request->send(response);
+//    AsyncResponseStream *response = request->beginResponseStream("application/json");
+//    StaticJsonDocument<500> doc;
+//    doc["heap"] = ESP.getFreeHeap();
+//    doc["ssid"] = this->ssid;
+//    doc["streaming"] = file!=NULL;
+//    doc["bluetooth"] = a2d_sink!=NULL;
+//    doc["bluetooth_name"] = bluetooth_name;
+//    doc["stream"] = musicUrl;
+//    serializeJson(doc, *response);
+//    request->send(response);
+    char jsonResponse[500];
+    sprintf(jsonResponse, jsonFmt,ESP.getFreeHeap(),this->ssid.c_str(),file!=NULL,a2d_sink!=NULL, bluetooth_name);
+    request->send(200, "application/json", jsonResponse);
+    
 }
 
 

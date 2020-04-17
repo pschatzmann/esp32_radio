@@ -13,13 +13,10 @@ export default class MusicPlayerESP32 {
         return "Streaming on ESP32"
     }
 
-    async setup() {
-    }
-
     async play(url){
         MusicPlayerESP32.isPlaying = true;
         var response = await this.service.postStreaming(MusicPlayerESP32.isPlaying, url)
-        return response.status == 200 ? response.data.streaming : false
+        return response.status == 200 ? {url : url, playing:true} :{url : url, playing:false} 
     }
 
     async stop() {

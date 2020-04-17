@@ -30,6 +30,7 @@
 class Radio {
 
   public:
+    void setup();
     void startBluetooth();
     void stopBluetooth();
     void startStreaming(String url);
@@ -49,9 +50,11 @@ class Radio {
     AudioOutputI2S *out=NULL;
     String bluetooth_name = "MusicPlayer";
     String musicUrl = "http://listen.181fm.com/181-blues_128k.mp3";
+    const char* jsonFmt = "{ \"heap\": %d, \"ssid\": \"%s\", \"streaming\": %B, \"bluetooth\": %B, \"bluetooth_name\": \"%s\" }";
     // timer
     unsigned long lastActivity = millis()/1000;
     bool streamingReady = false;
+    String ssid;
 
 
 };

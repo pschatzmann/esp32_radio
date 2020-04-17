@@ -58,7 +58,6 @@ export default new Vuex.Store({
         state.musicPlayer.stop()
       }
       state.musicPlayer = state.supportedMusicPlayers[idx];
-      state.musicPlayer.setup();
     },
 
     setBlacklist(state,blacklist) {

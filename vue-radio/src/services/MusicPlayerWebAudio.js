@@ -19,6 +19,7 @@
 */
 
 import WebService from "@/services/WebService"
+import store from '@/store/index';
 
 export default class MusicPlayer {
     constructor(){
@@ -33,21 +34,32 @@ export default class MusicPlayer {
         return "Playing locally"
     }
 
-    async setup() {
-        return await this.service.postBluetooth(true);
-    }
-
     async play(url){
         await this.stop();
         try {
-            MusicPlayer.audio = new Audio(url);
-            await MusicPlayer.audio.play();
-            MusicPlayer.isPlaying = true
-            console.info("MusicPlayer -> OK")
-            return  {url : url, playing:true }  
+            var result = await this.setup();
+            if (result){
+                MusicPlayer.audio = new Audio(url);
+                await MusicPlayer.audio.play();
+                MusicPlayer.isPlaying = true
+                console.info("MusicPlayer -> OK")
+                return  {url : url, playing:true }  
+            } else {
+                return  {url : url, playing:false }  
+            }
         } catch(error){
             console.error(error)
             return  {url : url, playing:false } 
+        }
+    }
+
+    async setup() {
+        if (store.state.esp32){
+            // make sure that bleutooth is active on esp32
+            var response = await this.service.postBluetooth(true);
+            return response.data.bluetooth 
+        } else {
+            return true;
         }
     }
 
