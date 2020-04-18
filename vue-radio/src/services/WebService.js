@@ -62,7 +62,7 @@ export default class WebService {
             const formData = new FormData()
             formData.set('url', url);
             return await axios.post('/service/streaming/start', formData, {
-                headers: formData.getHeaders()
+                headers: {'Content-Type': 'multipart/form-data' }
             })
         } else {
             return await axios.post('/service/streaming/stop')            

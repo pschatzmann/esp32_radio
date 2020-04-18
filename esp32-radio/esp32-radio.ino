@@ -162,7 +162,7 @@ void setupServer() {
       radio.sendResponse(server);
   });
 
-  //server.enableCrossOrigin(true);
+  server.enableCrossOrigin(true);
   // start server
   server.begin();
 
