@@ -18,6 +18,11 @@
 
 #include "Radio.hpp"
 
+unsigned long Radio::lastActivity = millis()/1000;
+
+Radio::Radio() {
+}
+
 void Radio::setup(){
   ssid = WiFi.SSID();
 }
@@ -27,14 +32,15 @@ void Radio::startBluetooth() {
   stopStreaming();
   if (a2d_sink==NULL){
       a2d_sink = new BlootoothA2DSink();
+      a2d_sink->set_on_data_received(recordActivity);
       a2d_sink->start((char*)bluetooth_name.c_str());
       ESP_LOGI("[eisp32_radio]","bluetooth started");    
-  }
+  };
 }
 
 void Radio::stopBluetooth() {
   try {
-      if (a2d_sink)
+      if (a2d_sink!=NULL)
         delete(a2d_sink);
       a2d_sink = NULL;
   } catch (const std::exception& e) { 
@@ -64,24 +70,14 @@ void Radio::startStreaming(String url) {
 
 void Radio::stopStreaming() {
   try {
-    if (audio && audio->isRunning())
+    if (audio!=NULL && audio->isRunning())
       audio->stop();      
   } catch (const std::exception& e) { 
     ESP_LOGE("[eisp32_radio]","could not stop audio"); 
   }
 
-  streamingReady = false;
-
   try {
-      if (file)
-        delete(file);
-      file = NULL;
-  } catch (const std::exception& e) { 
-    ESP_LOGE("[eisp32_radio]","could not free file"); 
-  }
-
-  try {
-      if (audio)
+      if (audio!=NULL)
         delete(audio);
       audio = NULL;
   } catch (const std::exception& e) { 
@@ -89,7 +85,15 @@ void Radio::stopStreaming() {
   }
 
   try {
-      if (out)
+      if (file!=NULL)
+        delete(file);
+      file = NULL;
+  } catch (const std::exception& e) { 
+    ESP_LOGE("[eisp32_radio]","could not free file"); 
+  }
+
+  try {
+      if (out!=NULL)
         delete(out);
       out = NULL;
   } catch (const std::exception& e) { 
@@ -99,58 +103,27 @@ void Radio::stopStreaming() {
   ESP_LOGI("[eisp32_radio]","stoped"); 
 }
 
-boolean Radio::isStart(AsyncWebServerRequest *request) {
-    bool start = true;
-    if(request->hasParam("action")) {
-      AsyncWebParameter* p = request->getParam("action");
-      String action = p->value();
-      if (action.equals("stop")){
-          start = false;
-      }
-    }
-    ESP_LOGI("[eisp32_radio]","isStart -> %s",start?"true":false);    
-    return start;
-}
-
-String Radio::getMusicURL(uint8_t *data, size_t len) {
-    DynamicJsonDocument doc(len);
-    DeserializationError err = deserializeJson(doc, data);
-    if (err) {
-      Serial.print(F("deserializeJson() failed with code "));
-      Serial.println(err.c_str());
-      ESP_LOGE("[eisp32_radio]","deserializeJson() failed with code %s", err.c_str());    
-      return musicUrl;
-    } else {
-      String url = doc["url"]; 
-      musicUrl = url;    
-      ESP_LOGI("[eisp32_radio]","getMusicURL %s", musicUrl.c_str());          
-    }
-
-    return musicUrl;
-}
-
-void Radio::sendResponse(AsyncWebServerRequest *request) {
+void Radio::sendResponse(WebServer &server) {
     ESP_LOGI("[eisp32_radio]","sendResponse");    
-//    AsyncResponseStream *response = request->beginResponseStream("application/json");
-//    StaticJsonDocument<500> doc;
-//    doc["heap"] = ESP.getFreeHeap();
-//    doc["ssid"] = this->ssid;
-//    doc["streaming"] = file!=NULL;
-//    doc["bluetooth"] = a2d_sink!=NULL;
-//    doc["bluetooth_name"] = bluetooth_name;
-//    doc["stream"] = musicUrl;
-//    serializeJson(doc, *response);
-//    request->send(response);
-    char jsonResponse[500];
-    sprintf(jsonResponse, jsonFmt,ESP.getFreeHeap(),this->ssid.c_str(),file!=NULL,a2d_sink!=NULL, bluetooth_name);
-    request->send(200, "application/json", jsonResponse);
-    
+    //AsyncResponseStream *response = request->beginResponseStream("application/json");
+   StaticJsonDocument<500> doc;
+    doc["heap"] = ESP.getFreeHeap();
+    doc["ssid"] = this->ssid;
+    doc["streaming"] = file!=NULL;
+    doc["bluetooth"] = a2d_sink!=NULL;
+    doc["bluetooth_name"] = bluetooth_name;
+    doc["stream"] = musicUrl;
+    serializeJson(doc, jsonResponse);
+    server.send(200, "application/json", jsonResponse);
+//    sprintf(jsonResponse, jsonFmt,ESP.getFreeHeap(),this->ssid.c_str(),file!=NULL,a2d_sink!=NULL, bluetooth_name.c_str());
+//    server.send(200, "application/json", jsonResponse);
+
 }
 
 
 void Radio::loop(){
   try {
-    if (streamingReady && audio->isRunning()) {
+    if (audio!=NULL && audio->isRunning()) {
       audio->loop();
     }
   } catch (const std::exception& e) { 

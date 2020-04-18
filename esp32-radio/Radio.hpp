@@ -16,7 +16,9 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "ESPAsyncWebServer.h"
+//#include "ESPAsyncWebServer.h"
+#include <WebServer.h>
+
 #include "esp32_bt_music_receiver.h"
 #include "esp32_bt_music_receiver.h"
 #include "AudioFileSourceICYStream.h"
@@ -30,31 +32,32 @@
 class Radio {
 
   public:
+    Radio();
     void setup();
     void startBluetooth();
     void stopBluetooth();
     void startStreaming(String url);
     void stopStreaming();
-    boolean isStart(AsyncWebServerRequest *request);
-    String getMusicURL(uint8_t *data, size_t len);
-    void sendResponse(AsyncWebServerRequest *request);
+    void sendResponse(WebServer &server);
     void loop();
-    void recordActivity();
-    bool notActiveFor(unsigned long);
+    static void recordActivity();
+    static bool notActiveFor(unsigned long);
     
   private:
     // Music Player
-    BlootoothA2DSink *a2d_sink;
+    BlootoothA2DSink *a2d_sink=NULL;
     AudioGenerator *audio=NULL;
     AudioFileSourceHTTPStream *file=NULL;
     AudioOutputI2S *out=NULL;
+    String ssid;
     String bluetooth_name = "MusicPlayer";
     String musicUrl = "http://listen.181fm.com/181-blues_128k.mp3";
+    //StaticJsonDocument<500> doc;
     const char* jsonFmt = "{ \"heap\": %d, \"ssid\": \"%s\", \"streaming\": %B, \"bluetooth\": %B, \"bluetooth_name\": \"%s\" }";
+    char jsonResponse[500];
     // timer
-    unsigned long lastActivity = millis()/1000;
     bool streamingReady = false;
-    String ssid;
+    static unsigned long lastActivity;
 
 
 };

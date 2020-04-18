@@ -17,7 +17,6 @@
 
 #include <Arduino.h>
 #include "HTTPClient.h"
-#include "ESPAsyncWebServer.h"
 
 #ifndef _ESPAsyncTunnel_H_
 #define _ESPAsyncTunnel_H_

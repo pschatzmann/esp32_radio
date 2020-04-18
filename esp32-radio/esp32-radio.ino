@@ -14,11 +14,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-#define NDEBUG
 
-#include <vector>
-#include "AsyncTCP.h"
-#include "ESPAsyncWebServer.h"
+#include <WebServer.h>
 #include "ESPAsyncTunnel.h"
 #include "ArduinoJson.h"
 #include "Radio.hpp"
@@ -30,14 +27,15 @@ const String password = "password";
 
 
 // Web Server & Sevices
-AsyncWebServer server(80);
+WebServer server(80);
 String path = "/esp32_radio/vue-radio/dist";
-String pathMatch = "/esp32_radio/*";
+String pathMatch = "/esp32_radio/";
 
 String indexPath = path+"/index.html";
 String iconPath = path+"/favicon.ico";
-String serverPathHttp = "http://github.pschatzmann.ch";
 String serverPath = "https://pschatzmann.github.io";
+char moved_url[500];
+String indexHtml;
 
 // Radio
 Radio radio;
@@ -57,89 +55,116 @@ void setupWifi() {
 }
 
 
+void setupIndexHtml() {
+    ClientRequestTunnel tunnel; 
+    if (tunnel.open(serverPath+indexPath)) {
+        indexHtml = tunnel.getString();
+    } else {
+        indexHtml = "<!DOCTYPE html><html><body><h1>Error</h1><p>The ESP32 is not available</p></body></html>";
+        ESP_LOGE("[eisp32_radio]","Could not read index.html");    
+    }
+}
+
+void redirect(const char *url){
+    ESP_LOGI("[eisp32_radio]","redirect to %s", url);    
+    server.sendHeader("Location", url, true);
+    server.send(301, "", "");
+}
+
 void setupServer() {
-  // rewrites
-  server.rewrite( "/", indexPath.c_str()) ;
-  server.rewrite( "/index.html", indexPath.c_str());
-  server.rewrite( "/favicon.ico", iconPath.c_str());
+
+  setupIndexHtml();  
 
   // tunnel the index.html request: We avoid https because this is consuming too much memory
   // so we get the index.html from a http source
-  server.on(indexPath.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
+  server.on(indexPath.c_str(), HTTP_GET, [&](){
       radio.recordActivity();
-      ClientRequestTunnel tunnel; 
-      if (tunnel.open(serverPathHttp.c_str(), request->url())) {
-          String result = tunnel.getString();
-          request->send(200, "text/html", result);          
-      } else {
-          request->send(tunnel.getHttpCode());
-      }
+      server.send(200, "text/html", indexHtml);    
+  });
+  
+  server.on("/index.html", HTTP_GET, [&](){
+      radio.recordActivity();
+      server.send(200, "text/html", indexHtml);    
   });
 
-  server.on(pathMatch.c_str(), HTTP_GET, [&](AsyncWebServerRequest *request){
-    String moved_url = serverPath+request->url();
-    request->redirect(moved_url);
+  server.on("/", HTTP_GET, [&](){
+      radio.recordActivity();
+      server.send(200, "text/html", indexHtml);    
   });
 
+  // redirect favicon
+  server.on( "/favicon.ico", HTTP_GET, [&](){
+      radio.recordActivity();
+      redirect(iconPath.c_str());    
+  });
+
+  // redirect all other request to github
+  //server.on(pathMatch, HTTP_GET, [&](){
+  server.onNotFound([&](){
+    String url = server.uri();
+    if (url.startsWith(pathMatch)) {  
+      ESP_LOGD("[onNotFound]","-> redirect %s",url.c_str());    
+      strcpy(moved_url, serverPath.c_str()),
+      strcat(moved_url, url.c_str()),    
+      redirect(moved_url);
+    } else {
+      ESP_LOGD("[onNotFound]","-> not found %s",url.c_str());    
+      server.send(404, "", "");    
+    }
+  });
 
   // Generic Services
-  server.on("/service/info", HTTP_GET, [](AsyncWebServerRequest *request){
-      ESP_LOGI("[eisp32_radio]","info");    
+  server.on("/service/info", HTTP_GET, [](){
+      ESP_LOGD("[eisp32_radio]","info");    
       radio.recordActivity();
-      ESP_LOGI("[eisp32_radio]","info");    
-      radio.sendResponse(request);
+      ESP_LOGD("[eisp32_radio]","info");    
+      radio.sendResponse(server);
   });
 
-  //Shut down server
-  server.on("/service/shutdown", HTTP_POST, [](AsyncWebServerRequest *request){
+  server.on("/service/shutdown", HTTP_POST, [](){
       ESP_LOGI("[eisp32_radio]","shutdown");    
       radio.recordActivity();
       ESP_LOGI("[eisp32_radio]","shutdown");    
       esp_deep_sleep_start();
   });
 
-  server.on("/service/bluetooth/start", HTTP_POST, [](AsyncWebServerRequest *request){
-      ESP_LOGI("[eisp32_radio]","bluetooth/start");    
+  server.on("/service/bluetooth/start", HTTP_POST, [](){
+      ESP_LOGD("[eisp32_radio]","bluetooth/start");    
       radio.recordActivity();
       radio.startBluetooth();       
-      radio.sendResponse(request);
+      radio.sendResponse(server);
   });
 
-  server.on("/service/bluetooth/stop", HTTP_POST, [](AsyncWebServerRequest *request){
-      ESP_LOGI("[eisp32_radio]","bluetooth/stop");    
+  server.on("/service/bluetooth/stop", HTTP_POST, [](){
+      ESP_LOGD("[eisp32_radio]","bluetooth/stop");    
       radio.recordActivity();
       radio.stopBluetooth();
-      radio.sendResponse(request);
+      radio.sendResponse(server);
   });
 
-  server.on("/service/restart", HTTP_POST, [](AsyncWebServerRequest *request){
+  server.on("/service/restart", HTTP_POST, [](){
       ESP_LOGI("[eisp32_radio]","restart");    
       ESP.restart();
   });
 
-  server.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
-    if (request->url() == "/service/streaming/start") {
-      ESP_LOGI("[eisp32_radio]","onRequestBody");    
+  server.on("/service/streaming/start", HTTP_POST, [](){
+      ESP_LOGD("[eisp32_radio]","streaming/start");    
       radio.recordActivity();
-      String url = radio.getMusicURL(data, len);        
+      String url = server.arg("url");        
       radio.startStreaming(url);
-      radio.sendResponse(request);
-    }
+      radio.sendResponse(server);
   });
 
-
-  server.on("/service/streaming/stop", HTTP_POST, [](AsyncWebServerRequest *request){
-      ESP_LOGI("[eisp32_radio]","streaming/stop");    
+  server.on("/service/streaming/stop", HTTP_POST, [](){
+      ESP_LOGD("[eisp32_radio]","streaming/stop");    
       radio.recordActivity();
       radio.stopStreaming();
-      radio.sendResponse(request);
+      radio.sendResponse(server);
   });
 
- 
+  //server.enableCrossOrigin(true);
   // start server
   server.begin();
-  // automatically start Bluetooth ?
-  //radio.startBluetooth();
 
 }
 
@@ -147,6 +172,8 @@ void setup(){
   audioLogger = &Serial;
   setupWifi();
   setupServer();
+  radio.startBluetooth();       
+
 
   ESP_LOGI("[eisp32_radio]","free heep: %u", ESP.getFreeHeap());    
   
@@ -157,13 +184,13 @@ void setup(){
 
 
 void loop(){
+  server.handleClient();
   radio.loop();
-
-  // if not used for more then 10 min - we shut down
-  if (radio.notActiveFor(60*10)){
+  
+  // if not used for more then n sec - we shut down
+  if (radio.notActiveFor(15*60)){
       ESP_LOGI("[eisp32_radio]","shut down"); 
       esp_deep_sleep_start();
-   
   }
 
 }
