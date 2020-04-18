@@ -54,15 +54,17 @@ void Radio::startStreaming(String url) {
   streamingReady = false;
   stopBluetooth();
   stopStreaming();
-  if (file==NULL)
-    file = new AudioFileSourceICYStream(url.c_str());
-  file->SetReconnect(5, 0);
-
-  if (out==NULL)
-    out = new AudioOutputI2S(); // (0,1) is using the internal DAC
-  if (audio==NULL)
-    audio = new AudioGeneratorMP3();
-  audio->begin(file, out);
+  if (!url.isEmpty()){
+    if (file==NULL)
+      file = new AudioFileSourceICYStream(url.c_str());
+    file->SetReconnect(5, 0);
+  
+    if (out==NULL)
+      out = new AudioOutputI2S(); // (0,1) is using the internal DAC
+    if (audio==NULL)
+      audio = new AudioGeneratorMP3();
+    audio->begin(file, out);
+  }
   streamingReady = true;
   ESP_LOGI("[eisp32_radio]","play started");    
   
@@ -100,6 +102,7 @@ void Radio::stopStreaming() {
     ESP_LOGE("[eisp32_radio]","could not free out"); 
   }
   
+  streamingReady = false;
   ESP_LOGI("[eisp32_radio]","stoped"); 
 }
 
@@ -109,7 +112,7 @@ void Radio::sendResponse(WebServer &server) {
    StaticJsonDocument<500> doc;
     doc["heap"] = ESP.getFreeHeap();
     doc["ssid"] = this->ssid;
-    doc["streaming"] = file!=NULL;
+    doc["streaming"] = streamingReady;
     doc["bluetooth"] = a2d_sink!=NULL;
     doc["bluetooth_name"] = bluetooth_name;
     doc["stream"] = musicUrl;

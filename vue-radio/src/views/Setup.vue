@@ -61,17 +61,16 @@ export default {
 
         methods: {
             changeStreaming() {
-                new WebService().postStreaming(this.ws.streaming ).then(result => {
+                this.$store.commit('setMusicPlayer', 1);
+                new WebService().postStreaming(this.ws.streaming, '' ).then(result => {
                     console.log(result);
                     this.ws = result.data
                     this.errors.streaming = ""
                     // when we are streaming we use the ESP player implementation
-                    this.$store.commit('setMusicPlayer', 1);
                 }).catch(error => {
-                    this.ws.streaming = !this.ws.streaming;
-                    this.$store.state.musicPlayer.setSourceESP(this.ws.streaming)
-                    this.errors.streaming = "Streaming Service failed"
                     console.error(error);
+                    this.ws.streaming = !this.ws.streaming;
+                    this.errors.streaming = "Streaming Service failed"
                 })
             },
             

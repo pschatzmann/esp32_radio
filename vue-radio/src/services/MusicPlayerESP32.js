@@ -21,7 +21,7 @@ export default class MusicPlayerESP32 {
 
     async stop() {
         MusicPlayerESP32.isPlaying = false;
-        return await this.service.postStreaming(MusicPlayerESP32.isPlaying, null)
+        return await this.service.postStreaming(MusicPlayerESP32.isPlaying, '')
     }
 
     async getInfo() {
