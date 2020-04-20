@@ -53,7 +53,7 @@ export default new Vuex.Store({
       if (isEsp){
         state.title = 'ESP32 Radio Player';
         state.esp32 = true;
-        // access data directly on github
+        // we avoid to load the resources from the ESP32
         state.publicPath = state.resourceAddress + process.env.BASE_URL
       } else {
         state.esp32 = false;
