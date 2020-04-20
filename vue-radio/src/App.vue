@@ -87,7 +87,7 @@
 
 </script>
 
-<style scoped>
+<style>
     .radioTitle {
         font-size: 11px;
         font-style: italic;

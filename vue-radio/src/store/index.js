@@ -20,7 +20,8 @@ export default new Vuex.Store({
     radios: {},
     musicPlayer: null,
     supportedMusicPlayers: [new MusicPlayerWebAudio(), new MusicPlayerESP32()],
-    blacklist: []
+    blacklist: [],
+    resourceAddress: "https://pschatzmann.github.io"
 
   },
   mutations: {

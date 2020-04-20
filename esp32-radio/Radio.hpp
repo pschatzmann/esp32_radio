@@ -24,7 +24,6 @@
 #include "AudioFileSourceICYStream.h"
 #include "AudioGeneratorMP3.h"
 #include "AudioOutputI2S.h"
-#include "ArduinoJson.h"
 
 #ifndef _RADIO.HPP_
 #define _RADIO.HPP_
@@ -50,10 +49,9 @@ class Radio {
     AudioFileSourceHTTPStream *file=NULL;
     AudioOutputI2S *out=NULL;
     String ssid;
-    String bluetooth_name = "MusicPlayer";
+    String bluetooth_name = "RadioPlayer";
     String musicUrl = "http://listen.181fm.com/181-blues_128k.mp3";
-    //StaticJsonDocument<500> doc;
-    const char* jsonFmt = "{ \"heap\": %d, \"ssid\": \"%s\", \"streaming\": %B, \"bluetooth\": %B, \"bluetooth_name\": \"%s\" }";
+    const char* jsonFmt = "{ \"heap\": %d, \"ssid\": \"%s\", \"streaming\": %s, \"bluetooth\": %s, \"bluetooth_name\": \"%s\" }";
     char jsonResponse[500];
     // timer
     bool streamingReady = false;

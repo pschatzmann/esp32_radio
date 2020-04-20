@@ -16,8 +16,8 @@
 */
 
 #include <WebServer.h>
+#include <mdns.h>
 #include "ESPAsyncTunnel.h"
-#include "ArduinoJson.h"
 #include "Radio.hpp"
 
 
@@ -44,6 +44,7 @@ void setupWifi() {
   Serial.begin(115200);
   //WiFi.mode(WIFI_STA);
   WiFi.begin(ssid.c_str(), password.c_str());
+  WiFi.setSleep(false);
 
   Serial.print("Connecting");
   while (WiFi.status() != WL_CONNECTED) {
@@ -58,7 +59,9 @@ void setupWifi() {
 void setupIndexHtml() {
     ClientRequestTunnel tunnel; 
     if (tunnel.open(serverPath+indexPath)) {
+        String raplace = serverPath+"/esp32_radio/";
         indexHtml = tunnel.getString();
+        indexHtml.replace("/esp32_radio/", raplace.c_str());
     } else {
         indexHtml = "<!DOCTYPE html><html><body><h1>Error</h1><p>The ESP32 is not available</p></body></html>";
         ESP_LOGE("[eisp32_radio]","Could not read index.html");    
@@ -71,25 +74,29 @@ void redirect(const char *url){
     server.send(301, "", "");
 }
 
-void setupServer() {
+void processIndex(){
+    radio.recordActivity();
+    //server.sendHeader("X-XSS-Protection", "0;", true);
+    server.send(200, "text/html", indexHtml);    
+}
 
+void setupServer() {
+  // we read the index.html into memory and keep it in order to minimize the risk that the server fails because 
+  // we can not reload the index due to a shortage in memory
   setupIndexHtml();  
 
   // tunnel the index.html request: We avoid https because this is consuming too much memory
   // so we get the index.html from a http source
   server.on(indexPath.c_str(), HTTP_GET, [&](){
-      radio.recordActivity();
-      server.send(200, "text/html", indexHtml);    
+    processIndex();
   });
   
   server.on("/index.html", HTTP_GET, [&](){
-      radio.recordActivity();
-      server.send(200, "text/html", indexHtml);    
+    processIndex();
   });
 
   server.on("/", HTTP_GET, [&](){
-      radio.recordActivity();
-      server.send(200, "text/html", indexHtml);    
+    processIndex();
   });
 
   // redirect favicon
@@ -97,6 +104,7 @@ void setupServer() {
       radio.recordActivity();
       redirect(iconPath.c_str());    
   });
+
 
   // redirect all other request to github
   //server.on(pathMatch, HTTP_GET, [&](){
@@ -112,6 +120,7 @@ void setupServer() {
       server.send(404, "", "");    
     }
   });
+
 
   // Generic Services
   server.on("/service/info", HTTP_GET, [](){
@@ -162,17 +171,35 @@ void setupServer() {
       radio.sendResponse(server);
   });
 
-  server.enableCrossOrigin(true);
+  //server.enableCORS(true);
+  
   // start server
   server.begin();
 
 }
 
+void setupMdnService()
+{
+    //initialize mDNS service
+    esp_err_t err = mdns_init();
+    if (err) {
+        printf("MDNS Init failed: %d\n", err);
+        return;
+    }
+
+    //set hostname
+    mdns_hostname_set("RadioPlayer");
+    //set default instance
+    mdns_instance_name_set("ESP32 Radio Player");
+}
+
+
 void setup(){  
   audioLogger = &Serial;
   setupWifi();
+  setupMdnService();
   setupServer();
-  radio.startBluetooth();       
+  //radio.startBluetooth();       
 
 
   ESP_LOGI("[eisp32_radio]","free heep: %u", ESP.getFreeHeap());    

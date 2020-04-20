@@ -160,7 +160,7 @@
 
 </script>
 
-<style scoped>
+<style>
     .v-card {
         cursor: pointer;
     }

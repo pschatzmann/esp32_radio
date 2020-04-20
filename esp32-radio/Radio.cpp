@@ -109,17 +109,8 @@ void Radio::stopStreaming() {
 void Radio::sendResponse(WebServer &server) {
     ESP_LOGI("[eisp32_radio]","sendResponse");    
     //AsyncResponseStream *response = request->beginResponseStream("application/json");
-   StaticJsonDocument<500> doc;
-    doc["heap"] = ESP.getFreeHeap();
-    doc["ssid"] = this->ssid;
-    doc["streaming"] = streamingReady;
-    doc["bluetooth"] = a2d_sink!=NULL;
-    doc["bluetooth_name"] = bluetooth_name;
-    doc["stream"] = musicUrl;
-    serializeJson(doc, jsonResponse);
+    sprintf(jsonResponse, jsonFmt, ESP.getFreeHeap(), this->ssid.c_str(), streamingReady?"true":"false", a2d_sink!=NULL?"true":"false", bluetooth_name.c_str());
     server.send(200, "application/json", jsonResponse);
-//    sprintf(jsonResponse, jsonFmt,ESP.getFreeHeap(),this->ssid.c_str(),file!=NULL,a2d_sink!=NULL, bluetooth_name.c_str());
-//    server.send(200, "application/json", jsonResponse);
 
 }
 

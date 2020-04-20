@@ -23,7 +23,7 @@
                         <v-card outlined tiled class="mx-auto" max-width="200px" :elevation="hover ? 16 : 2" @click.native="doSelect(item.name)">
 
                             <v-img
-                                :src="item.imageUrl"
+                                :src="getUrl(item.imageUrl)"
                                 class="white--text align-end"
                                 height="200px"
                                 width="200px">
@@ -46,6 +46,16 @@ export default {
     methods: {
         doSelect: function (search) {
             this.$router.push({ path: '/genres/'+search.toLowerCase() })
+        },
+
+        getUrl(path){
+            var result = path
+            if (this.$store.state.esp32) {
+                // the esp32 cant handle too many concurrent requests, therfore we send it directly
+                // to the final server address
+                result = this.$store.state.resourceAddress + path
+            }
+            return result;
         }
     },
 
@@ -56,7 +66,7 @@ export default {
 
 </script>
 
-<style scoped>
+<style>
     .v-card {
         cursor: pointer;
     }

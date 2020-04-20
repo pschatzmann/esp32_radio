@@ -1,0 +1,1 @@
+.v-card{cursor:pointer}.selected{background-color:#a9a9a9}.pulsate{-webkit-animation:pulse 1s infinite;animation:pulse 1s infinite}@-webkit-keyframes pulse{0%{background-color:#d3d3d3}to{background-color:#000}}@keyframes pulse{0%{background-color:#d3d3d3}to{background-color:#000}}
