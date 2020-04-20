@@ -53,6 +53,8 @@ export default new Vuex.Store({
       if (isEsp){
         state.title = 'ESP32 Radio Player';
         state.esp32 = true;
+        // access data directly on github
+        state.publicPath = state.resourceAddress + process.env.BASE_URL
       } else {
         state.esp32 = false;
       }
@@ -80,7 +82,7 @@ export default new Vuex.Store({
       if (context.state.genres.length==0) {
         context.commit('setLoading', true);
 
-        const publicPath = context.state.publicPath;
+        const publicPath = context.state.publicPath;        
         const ws = new WebService()
         ws.getGenres(publicPath).then(result => {
             result.data.forEach(c => {c.imageUrl = publicPath+c.imageUrl;});

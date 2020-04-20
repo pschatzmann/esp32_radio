@@ -73,9 +73,9 @@
 
     created() {
       this.$store.dispatch('setupTitle')
-      this.$store.commit('setMusicPlayer', 0);
       this.$store.dispatch('setupBlacklist')
       this.$store.dispatch('setupHomeCountry')
+      this.$store.commit('setMusicPlayer', 0);
     },
 
     
