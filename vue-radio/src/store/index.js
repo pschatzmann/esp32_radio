@@ -13,7 +13,7 @@ export default new Vuex.Store({
     genres: [],
     homeCountry: null,
     title: "Radio Player",
-    esp32: false,
+    esp32: null,
     publicPath: process.env.BASE_URL,
     drawer: null,
     activeRadio: {id:null, active:false, url:null, error:false, name:''},
@@ -49,9 +49,13 @@ export default new Vuex.Store({
       state.radios[upd.id] = upd.value;
     },
 
-    setESP32Title(state) {
-      state.title = 'ESP32 Radio Player';
-      state.esp32 = true;
+    setESP32(state, isEsp) {
+      if (isEsp){
+        state.title = 'ESP32 Radio Player';
+        state.esp32 = true;
+      } else {
+        state.esp32 = false;
+      }
     },
 
     setMusicPlayer(state, idx) {
@@ -143,8 +147,11 @@ export default new Vuex.Store({
     setupTitle(context){
       const ws = new WebService()
       ws.getInfo().then(result => {
-        context.commit('setESP32Title');
+        context.commit('setESP32', true);
         console.log(result)
+      }, error => {
+        context.commit('setESP32', false);
+        console.log(error)
       });
     },
 

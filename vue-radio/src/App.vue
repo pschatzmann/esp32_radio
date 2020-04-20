@@ -41,7 +41,7 @@
       <start-stop-control/>
     </v-app-bar>
 
-    <v-content>
+    <v-content v-if="$store.state.esp32!=null">
         <router-view/>
     </v-content>
   </v-app>
@@ -71,10 +71,10 @@
         }
     },
 
-    mounted() {
+    created() {
+      this.$store.dispatch('setupTitle')
       this.$store.commit('setMusicPlayer', 0);
       this.$store.dispatch('setupBlacklist')
-      this.$store.dispatch('setupTitle')
       this.$store.dispatch('setupHomeCountry')
     },
 
