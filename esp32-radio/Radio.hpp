@@ -41,7 +41,7 @@ class Radio {
     
   private:
     // Music Player
-    BluetoothA2DSink *a2d_sink=NULL;
+    BluetoothA2DPSink *a2d_sink=NULL;
     AudioGenerator *audio=NULL;
     AudioFileSourceHTTPStream *file=NULL;
     AudioOutputI2S *out=NULL;
