@@ -26,7 +26,7 @@ ClientRequestTunnel::ClientRequestTunnel() {
 }
 
 bool ClientRequestTunnel::open(String target, String url) {
-   open(getForwardURL(target, url));
+   return open(getForwardURL(target, url));
 }
 
 bool ClientRequestTunnel::open(String url) {
