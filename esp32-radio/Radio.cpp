@@ -31,7 +31,7 @@ void Radio::startBluetooth() {
   ESP_LOGI("[eisp32_radio]","bluetooth");    
   stopStreaming();
   if (a2d_sink==NULL){
-      a2d_sink = new BluetoothA2DSink();
+      a2d_sink = new BluetoothA2DPSink();
       a2d_sink->set_on_data_received(recordActivity);
       a2d_sink->start((char*)bluetooth_name.c_str());
       ESP_LOGI("[eisp32_radio]","bluetooth started");    
