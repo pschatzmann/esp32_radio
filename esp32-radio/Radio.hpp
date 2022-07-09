@@ -16,8 +16,8 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef _RADIO.HPP_
-#define _RADIO.HPP_
+#ifndef _RADIO_HPP_
+#define _RADIO_HPP_
 
 #include "WebServer.h"
 #include "BluetoothA2DPSink.h"
