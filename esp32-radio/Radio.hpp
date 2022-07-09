@@ -16,15 +16,14 @@
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-//#include "ESPAsyncWebServer.h"
-#include <WebServer.h>
+#ifndef _RADIO.HPP_
+#define _RADIO.HPP_
 
+#include "WebServer.h"
+#include "BluetoothA2DPSink.h"
 #include "AudioFileSourceICYStream.h"
 #include "AudioGeneratorMP3.h"
 #include "AudioOutputI2S.h"
-
-#ifndef _RADIO.HPP_
-#define _RADIO.HPP_
 
 class Radio {
 
@@ -42,7 +41,7 @@ class Radio {
     
   private:
     // Music Player
-    BlootoothA2DSink *a2d_sink=NULL;
+    BluetoothA2DSink *a2d_sink=NULL;
     AudioGenerator *audio=NULL;
     AudioFileSourceHTTPStream *file=NULL;
     AudioOutputI2S *out=NULL;
